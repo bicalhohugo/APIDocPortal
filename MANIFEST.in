@@ -1,4 +1,4 @@
-include nextel-docs/schema.sql
-graft nextel-docs/static
-graft nextel-docs/templates
+include api-docs/schema.sql
+graft api-docs/static
+graft api-docs/templates
 global-exclude *.pyc
