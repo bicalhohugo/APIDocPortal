@@ -1,0 +1,410 @@
+{% extends 'base/template.html' %}
+
+{% block header %}
+  {% block title %}Orquestrador: {% if orch %}{{ orch['name'] }} - {{ orch['version'] }}{% else %}(Não Encontrado){% endif %}{% endblock %}
+{% endblock %}
+
+{% block button_back %}
+
+<a href="{{ url_for('orch_controller.orch_list') }}" class="d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+    <i class="fas fa-arrow-left fa-sm text-white-50"></i> Voltar
+</a>
+
+{% endblock %}
+
+{% block content %}
+
+{% if orch and orch_data and orch['published'] %}
+
+  <div class="row">
+      <div class="col-sm-12">
+          <span class="small">Última alteração por <label class="font-weight-bold">{{ orch['last_handler_user'] }}</label> em <label class="font-weight-bold">{{ orch['last_handler_date'] }}</label>.</span>
+      </div>
+  </div>
+
+  <hr/>
+
+  <div class="row">
+      <div class="col-sm-12">
+          <h6 class="h4">Descrição</h6>
+      </div>
+  </div>
+
+  <div class="row">
+      <div class="col-sm-12 mb-2">
+          <span class="small">{{ orch_data['description']|default('(não informado)', True) }}</span>
+      </div>
+  </div>
+
+  <hr />
+
+  {% if orch_data['apis'] %}
+  {% for api in orch_data['apis'] %}
+  <div class="row">
+      <label for="apis" class="col-sm-2 font-weight-bold small">API:</label>
+      <div class="col-sm-10">
+          <span class="small">{{ api['path']|default('(não informado)', True) }}</span>
+      </div>
+  </div>
+  {% endfor %}
+  {% endif %}
+
+  {% if orch_data['orchestrators'] %}
+  {% for orchestrator in orch_data['orchestrators'] %}
+  <div class="row">
+      <label for="orchestrators" class="col-sm-2 font-weight-bold small">Orquestra:</label>
+      <div class="col-sm-10">
+          <span class="small">{{ orchestrator['name']|default('(não informado)', True) }}</span>
+      </div>
+  </div>
+  {% endfor %}
+  {% endif %}
+
+  <div class="row">
+      <label for="paradigm" class="col-sm-2 font-weight-bold small">Paradigma:</label>
+      <div class="col-sm-10">
+          <span class="small">{{ orch_data['paradigm']['name'] if orch_data['paradigm'] and orch_data['paradigm']['name'] else '(não informado)' }}</span>
+      </div>
+  </div>
+
+  <div class="row">
+      <label for="mechanism" class="col-sm-2 font-weight-bold small">Mecanismo:</label>
+      <div class="col-sm-10">
+          <span class="small">{{ orch_data['mechanism']['name'] if orch_data['mechanism'] and orch_data['mechanism']['name'] else '(não informado)' }}</span>
+      </div>
+  </div>
+
+  <hr />
+
+  <div class="row">
+      <div class="col-sm-12">
+          <h6 class="h4">Histórico de Alterações</h6>
+      </div>
+  </div>
+
+  <div class="form-group row">
+      <div class="col-sm-12">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th class="text-xs" width="10%">Versão</th>
+                            <th class="text-xs" width="10%">Data</th>
+                            <th class="text-xs" width="20%">Autor</th>
+                            <th class="text-xs" width="30%">Projeto</th>
+                            <th class="text-xs" width="30%">Descrição</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if orch_histories.count() > 0 %}
+                        {% for orch_history in orch_histories %}
+                        <tr>
+                            <td class="text-xs">{{ orch_history['orch_version']|default('(não informado)', True) }}</td>
+                            <td class="text-xs">{{ orch_history['date']|default('(não informado)', True) }}</td>
+                            <td class="text-xs">{{ orch_history['author']|default('(não informado)', True) }}</td>
+                            <td class="text-xs">{{ orch_history['project']|default('(não informado)', True) }}</td>
+                            <td class="text-xs">{{ orch_history['description']|default('(não informado)', True) }}</td>
+                        </tr>
+                        {% endfor %}
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <hr />
+
+    <div class="form-group row">
+        <div class="col-sm-12">
+            <h6 class="h4">Serviços Executados</h6>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTableServices" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th class="text-xs" width="15%">Ordem de Execução</th>
+                            <th class="text-xs" width="20%">Microserviço</th>
+                            <th class="text-xs" width="20%">Regra</th>
+                            <th class="text-xs" width="10%">Paradigma</th>
+                            <th class="text-xs" width="15%">Retentativa</th>
+                            <th class="text-xs" width="20%">Provedor</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if orch_data['services'] %}
+                        {% for service in orch_data['services'] %}
+                        <tr name="table_service_row">
+                            <td class="text-xs">{{ service['order']|default('(não informado)', True) }}</td>
+                            <td class="text-xs">{{ service['ms']|default('(não informado)', True) }}</td>
+                            <td class="text-xs">{{ service['rules']|default('(não informado)', True) }}</td>
+                            <td class="text-xs">{{ service['paradigm']|default('(não informado)', True) }}</td>
+                            <td class="text-xs">{{ service['retry']|default('(não informado)', True) }}</td>
+                            <td class="text-xs">{{ service['provider']|default('(não informado)', True) }}</td>
+                        </tr>
+                        {% endfor %}
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <hr />
+
+    <div class="form-group row">
+        <div class="col-sm-12">
+            <h6 class="h4">Políticas de Retentativas</h6>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTableRetryPolicy" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th class="text-xs" width="40%">Microserviço</th>
+                            <th class="text-xs" width="30%">Repetições</th>
+                            <th class="text-xs" width="30%">Intervalo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if orch_data['retry_policy'] %}
+                        {% for retry_policy in orch_data['retry_policy'] %}
+                        <tr name="table_retry_policy_row">
+                            <td class="text-xs">{{ retry_policy['ms']|default('(não informado)', True) }}</td>
+                            <td class="text-xs">{{ retry_policy['retry']|default('(não informado)', True) }}</td>
+                            <td class="text-xs">{{ retry_policy['interval']|default('(não informado)', True) }}</td>
+                        </tr>
+                        {% endfor %}
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <hr />
+
+    <div class="form-group row">
+        <div class="col-sm-12">
+            <h6 class="h4">Mapeamentos: Requisições dos Microserviços</h6>
+        </div>
+    </div>
+
+    {% if orch_data['mapping'] and orch_data['mapping']['services'] %}
+    {% for services in orch_data['mapping']['services'] %}
+    <div class="form-group row">
+        <div class="col-sm-12">
+            <label class="font-weight-bold">Request: {{ services['service_name']|default('(não informado)', True)  }}</label>
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTableMappingServices" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th class="text-xs" width="15%">Canônico</th>
+                            <th class="text-xs" width="20%">Descrição</th>
+                            <th class="text-xs" width="10%">Obrigatório</th>
+                            <th class="text-xs" width="10%">Tipo de Dado</th>
+                            <th class="text-xs" width="15%">Dominio</th>
+                            <th class="text-xs" width="15%">Tag Provedor</th>
+                            <th class="text-xs" width="15%">Regras MS</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if services['mapping_input'] %}
+                        {% for mapping_success in services['mapping_input'] %}
+                        <tr name="table_mapping_success_row">
+                            <td class="text-xs">{{ mapping_success['canonical']|default('(não informado)', True) }}</td>
+                            <td class="text-xs">{{ mapping_success['description']|default('(não informado)', True) }}</td>
+                            <td class="text-xs">{{ mapping_success['required']|default('(não informado)', True) }}</td>
+                            <td class="text-xs">{{ mapping_success['data_type']|default('(não informado)', True) }}</td>
+                            <td class="text-xs">{{ mapping_success['domain']|default('-', True) }}</td>
+                            <td class="text-xs">{{ mapping_success['provider_tag']|default('(não informado)', True) }}</td>
+                            <td class="text-xs">{{ mapping_success['ms_rules']|default('-', True) }}</td>
+                        </tr>
+                        {% endfor %}
+                        {% else %}
+                        <tr>
+                            <td class="text-xs" align="center" colspan="7">(Não informado)</td>
+                        </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    {% endif %}
+
+    <hr />
+
+    <div class="form-group row">
+        <div class="col-sm-12">
+            <h6 class="h4">Mapeamento de Saida</h6>
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <div class="col-sm-12">
+            <label class="font-weight-bold">Mapeamentos em Caso de Sucesso</label>
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTableMappingSuccessOutput" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th class="text-xs" width="15%">Canônico</th>
+                            <th class="text-xs" width="20%">Descrição</th>
+                            <th class="text-xs" width="10%">Obrigatório</th>
+                            <th class="text-xs" width="10%">Tipo de Dado</th>
+                            <th class="text-xs" width="15%">Dominio</th>
+                            <th class="text-xs" width="15%">Tag Provedor</th>
+                            <th class="text-xs" width="15%">Regras MS</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if orch_data['mapping'] %}
+                        {% for mapping_success in orch_data['mapping']['success_output'] %}
+                        <tr name="table_mapping_success_row">
+                            <td class="text-xs">{{ mapping_success['canonical']|default('(não informado)', True) }}</td>
+                            <td class="text-xs">{{ mapping_success['description']|default('(não informado)', True) }}</td>
+                            <td class="text-xs">{{ mapping_success['required']|default('(não informado)', True) }}</td>
+                            <td class="text-xs">{{ mapping_success['data_type']|default('(não informado)', True) }}</td>
+                            <td class="text-xs">{{ mapping_success['domain']|default('-', True) }}</td>
+                            <td class="text-xs">{{ mapping_success['provider_tag']|default('(não informado)', True) }}</td>
+                            <td class="text-xs">{{ mapping_success['ms_rules']|default('-', True) }}</td>
+                        </tr>
+                        {% endfor %}
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <div class="col-sm-12">
+            <label class="font-weight-bold">Mapeamentos em Caso de Erro</label>
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTableMappingErrorOutput" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th class="text-xs" width="20%">Canônico</th>
+                            <th class="text-xs" width="20%">Descrição</th>
+                            <th class="text-xs" width="10%">Obrigatório</th>
+                            <th class="text-xs" width="15%">Tipo de Dado</th>
+                            <th class="text-xs" width="20%">Tag Provedor</th>
+                            <th class="text-xs" width="15%">Regras MS</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if orch_data['mapping'] %}
+                        {% for mapping_error in orch_data['mapping']['error_output'] %}
+                        <tr name="table_mapping_error_row">
+                            <td class="text-xs">{{ mapping_error['canonical']|default('(não informado)', True) }}</td>
+                            <td class="text-xs">{{ mapping_error['description']|default('(não informado)', True) }}</td>
+                            <td class="text-xs">{{ mapping_error['required']|default('(não informado)', True) }}</td>
+                            <td class="text-xs">{{ mapping_error['data_type']|default('(não informado)', True) }}</td>
+                            <td class="text-xs">{{ mapping_error['provider_tag']|default('-', True) }}</td>
+                            <td class="text-xs">{{ mapping_error['ms_rules']|default('-', True) }}</td>
+                        </tr>
+                        {% endfor %}
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <hr />
+
+    {% if orch_data['important_notes'] %}
+    <div class="row">
+        <div class="col-sm-12">
+            <h6 class="h4">Considerações Importantes</h6>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12">
+            <span class="small">{{ orch_data['important_notes'] }}</span>
+        </div>
+    </div>
+
+    <hr />
+    {% endif %}
+
+    <div class="row">
+        <div class="col-sm-12">
+            <h6 class="h4">Códigos de Retorno</h6>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12">
+            <label class="font-weight-bold">Condição de Sucesso</label>
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTableReturnCodeSuccess" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th class="text-xs" width="30%">HTTP Status</th>
+                            <th class="text-xs" width="30%">Mensagem</th>
+                            <th class="text-xs" width="40%">Condições de Sucesso (Retorno Provedor)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if orch_data['return_code'] %}
+                        {% for return_success in orch_data['return_code']['success'] %}
+                        <tr name="table_return_code_success_row">
+                            <td class="text-xs">{{ return_success['http_status']|default('(não informado)', True) }}</td>
+                            <td class="text-xs">{{ return_success['message']|default('(não informado)', True) }}</td>
+                            <td class="text-xs">{{ return_success['provider_condition']|default('(não informado)', True) }}</td>
+                        </tr>
+                        {% endfor %}
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12">
+            <label class="font-weight-bold">Condição de Erro</label>
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTableReturnCodeError" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th class="text-xs" width="20%">HTTP Status</th>
+                            <th class="text-xs" width="25%">Mensagem</th>
+                            <th class="text-xs" width="25%">Detalhe</th>
+                            <th class="text-xs" width="30%">Condições de Erro (Retorno Provedor)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if orch_data['return_code'] %}
+                        {% for return_error in orch_data['return_code']['error'] %}
+                        <tr name="table_return_code_error_row">
+                            <td class="text-xs">{{ return_error['http_status']|default('(não informado)', True) }}</td>
+                            <td class="text-xs">{{ return_error['message']|default('(não informado)', True) }}</td>
+                            <td class="text-xs">{{ return_error['detail']|default('(não informado)', True) }}</td>
+                            <td class="text-xs">{{ return_error['provider_condition']|default('(não informado)', True) }}</td>
+                        </tr>
+                        {% endfor %}
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+{% else %}
+
+<div class="card mb-4 py-3 border-left-warning text-center">Dados inválidos</div>
+
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,72 @@
+{% import "macros/_macros.html" as macros %}
+{% extends 'base/template.html' %}
+
+{% block header %}
+  {% block title %}Lista de API's{% endblock %}
+{% endblock %}
+
+{% block content %}
+
+<div class="row">
+	<div class="col-lg-5">
+		<div class="card shadow mb-4">
+			<!-- Card Header - Accordion -->
+			<a href="#collapseCardMethodFilter" class="d-block card-header py-3" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="collapseCardMethodFilter">
+				<span class="icon">
+					<i class="fas fa-filter"></i>
+				</span>
+				<span class="m-0 font-weight-bold text-primary">Filtros</span>
+			</a>
+			<!-- Card Content - Collapse -->
+			<div class="collapse" id="collapseCardMethodFilter">
+				<div class="card-body row">
+					<label class="col-lg-3 small font-weight-bolder py-2">Métodos HTTP:</label>
+					<div class="col-lg-9">
+						{% for http_method in http_methods %}
+						<a href="{{ url_for('api_controller.api_list_by_method', method=http_method['method']) }}" class="btn {{ http_method['button_class'] }} btn-sm">
+							<span class="text">{{ http_method['method'] }}</span>
+						</a>
+						{% endfor %}
+						<a href="{{ url_for('api_controller.api_list') }}">Ver todas</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+{% if apis.count() > 0 %}
+<div class="row">
+	<div class="col-lg-12">
+		{% for api in apis %}
+		<div class="card mb-2 {{ css_div_class(api['method']) }}">
+			<a class="nav-link" href="{{ url_for('api_controller.api_detail', id=api['_id']) }}">
+				<div class="btn {{ css_button_class(api['method']) }} btn-sm">
+					<span class="text">{{ api['method'] }}</span>
+				</div>
+				<span class="font-weight-bolder text-black-50 m-1">{{ api['path'] }}</span>
+				<span class="text-black-50 m-1">{{ api['summary'] }}</span>
+				<span class="icon text-black-50">
+					<i class="fas fa-fw fa-angle-right"></i>
+				</span>				
+			</a>
+		</div>
+		{% endfor %}
+	</div>
+</div>
+
+{% if method %}
+{{ macros.pagination_widget(pagination.pages_array, pagination.actual_page, 'api_controller.api_list_by_method', method=method) }}
+{% else %}
+{{ macros.pagination_widget(pagination.pages_array, pagination.actual_page, 'api_controller.api_list') }}
+{% endif %}
+
+{% else %}
+<div class="card mb-4 py-3 border-left-warning text-center">Sem registros de APIs para serem exibidos, no momento!</div>
+{% endif %}
+
+{% endblock %}
+
+{% block script %}
+
+{% endblock %}

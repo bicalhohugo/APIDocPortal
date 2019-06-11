@@ -1,0 +1,22 @@
+.parameters-col_name, .response-col_status {
+    width: 20% !important;
+}        
+.parameters-col_description, .response-col_description {
+    width: 70% !important;
+}
+.response-col_links {
+    width: 10% !important;
+}
+/*
+hgroup.main a {
+    content: " "  !important;
+}
+hgroup.main a::after {
+    content: "Download YAML" !important;
+    
+}
+
+hgroup.main a::before {
+    content: "Download YAML" !important;
+    
+}*/

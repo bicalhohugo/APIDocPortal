@@ -1,0 +1,196 @@
+swagger: '2.0'
+info:
+  description: API - Titles - 2
+  version: 1.0.0
+  title: API - Titles
+  termsOfService: 'http://www.nextel.com.br/terms/'
+  contact:
+    email: IT_Arquitetura@nextel.com.br
+host: ms-apis-uat.nextel.com.br
+tags:
+  - name: Titles
+    description: Operacoes com titulos de pagamentos
+schemes:
+  - https
+paths:
+  '/customers/V1/titles':
+    post:
+      tags:
+        - Titles
+      summary: Consulta os titulos do cliente 2
+      description: 'Informacoes sobre titulos dos clientes. Essa API e utilizada para exposicao do servico post-customer-titles 2'
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/CustomerTitleRequest'
+      responses:
+        '200':
+          description: Sucesso
+          schema:
+            $ref: '#/definitions/CustomerTitleResponse'
+        '400':
+          description: Requisicao invalida
+          schema:
+            $ref: '#/definitions/Error'
+        '450':
+          description: Dados nao encontrados
+          schema:
+            $ref: '#/definitions/Error'
+        '451':
+          description: Pre-condicao Invalida
+          schema:
+            $ref: '#/definitions/Error'
+        '550':
+          description: Erro desconhecido no provedor
+          schema:
+            $ref: '#/definitions/Error'
+      security:
+            - customers_title: []
+            
+securityDefinitions:
+  customers_title:
+    type: oauth2
+    tokenUrl: 'https://ms-apis-uat.nextel.com.br/customers/V1/titles/oauth2/token'
+    flow: application
+    scopes: {}
+    
+definitions:
+  Error:
+    type: object
+    properties:
+      message:
+        type: string
+      detail:
+        type: string
+      providerDetail:
+        $ref: '#/definitions/ProviderDetail'
+  ProviderDetail:
+    type: object
+    properties:
+      name:
+        type: string
+      code:
+        type: string
+      message:
+        type: string
+
+  CustomerTitleRequest:
+    type: object
+    properties:
+      ccId:
+        type: string
+      title:
+        $ref: '#/definitions/TitleRequest'
+      dueDate:
+        $ref: '#/definitions/dueDateRequest'
+
+  
+  TitleRequest:
+    type: object
+    properties:
+      type:
+        $ref: '#/definitions/TitleTypeRequest'
+      openFlag:
+        type: boolean
+  
+  dueDateRequest:
+    type: object
+    properties:
+      from:
+        type: string
+        format: date
+      until:
+        type: string
+        format: date
+  
+  TitleTypeRequest:
+    type: object
+    properties:
+      code:
+        type: string
+  
+  
+  CustomerTitleResponse:
+    type: object
+    properties:
+      titles:
+        type: array
+        items:
+          $ref: '#/definitions/CustomerTitleResp'
+        
+  CustomerTitleResp:
+    type: object
+    properties:
+      id:
+        type: number
+        format: int64
+      number:
+        type: string
+      payment:
+        $ref: '#/definitions/PaymentTitle'
+      type:
+        $ref: '#/definitions/TypeTitle'
+      openFlag:
+        type: boolean
+      emissionDate:
+        type: string
+        format: date
+      dueDate:
+        type: string
+        format: date
+      value:
+        $ref: '#/definitions/ValueResp'
+      installments:
+        $ref: '#/definitions/InstallmentsResp'
+      barCode:
+        type: string
+        
+        
+  
+  InstallmentsResp:
+    type: object
+    properties:
+      number:
+        type: integer
+      quantity:
+        type: integer
+      
+  
+  ValueResp:
+    type: object
+    properties:
+      original:
+        type: number
+        format: double
+      remaining:
+        type: number
+        format: double
+      
+        
+  
+  TypeTitle:
+    type: object
+    properties:
+      code:
+        type: string
+      name:
+        type: string
+        
+  
+  PaymentTitle:
+    type: object
+    properties:
+      code:
+        type: string
+ 
+        
+externalDocs:
+  description: Find out more about Swagger
+  url: 'http://swagger.io'
+

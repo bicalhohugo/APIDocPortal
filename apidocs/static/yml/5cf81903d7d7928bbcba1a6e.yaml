@@ -1,0 +1,146 @@
+swagger: '2.0'
+info:
+  description: APIs protocolos de atendimento
+  version: 1.0.0
+  title: APIs - Attendencies Start
+  termsOfService: 'http://www.nextel.com.br/terms/'
+  contact:
+    email: IT_Arquitetura@nextel.com.br
+host: ms-apis-uat.nextel.com.br
+tags:
+  - name: Attendance Zendesk
+    description: ''
+  - name: Start Attendance
+    description: ''
+schemes:
+  - https
+paths:
+  '/attendance_register/V1/id/{id}':
+    get:
+      tags:
+        - Attendance Zendesk
+      summary: Consulta registro de atendimento
+      description: ''
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          description: Id do registro de atendimento (id)
+          required: true
+          type: integer
+      responses:
+        '200':
+          description: Sucesso
+          schema:
+            $ref: '#/definitions/AttendanceConsultResponse'
+        '401':
+          description: Não autorizado
+          schema:
+            $ref: '#/definitions/Unauthorized'
+        '450':
+          description: Dados não encontrados
+          schema:
+            $ref: '#/definitions/Error'
+        '550':
+          description: Erro desconhecido no provedor
+          schema:
+            $ref: '#/definitions/Error'
+      security:
+        - consult_attendance: []
+securityDefinitions:
+  attendencies_start:
+    type: oauth2
+    tokenUrl: 'https://ms-apis-uat.nextel.com.br/attendencies_start/V1/oauth2/token'
+    flow: application
+    scopes: {}
+  open_attendance_register:
+    type: oauth2
+    tokenUrl: 'https://ms-apis-uat.nextel.com.br/open_attendance_register/V1/oauth2/token'
+    flow: application
+    scopes: {}
+  close_attendance_register:
+    type: oauth2
+    tokenUrl: 'https://ms-apis-uat.nextel.com.br/close_attendance_register/V1/oauth2/token'
+    flow: application
+    scopes: {}
+  consult_attendance:
+    type: oauth2
+    tokenUrl: 'https://ms-apis-uat.nextel.com.br/consult_attendance/V1/oauth2/token'
+    flow: application
+    scopes: {}
+definitions:
+
+  Error:
+    type: object
+    properties:
+      message:
+        type: string
+      detail:
+        type: string
+      providerDetail:
+        $ref: '#/definitions/ProviderDetail'
+  ProviderDetail:
+    type: object
+    properties:
+      name:
+        type: string
+      code:
+        type: string
+      message:
+        type: string
+  Unauthorized:
+    type: object
+    properties:
+      error_description:
+        type: string
+        example: The access token is invalid or has expired
+      error:
+        type: string
+        example: invalid_token
+  AttendanceConsultResponse:
+    type: object
+    properties:
+      id:
+        type: integer
+      url:
+        type: string
+      type:
+        type: string
+      title:
+        type: string
+      raw_title:
+        type: string
+      description:
+        type: string
+      raw_description:
+        type: string
+      position:
+        type: string
+      active:
+        type: string
+      required:
+        type: string
+      collapsed_for_agents:
+        type: string
+      regexp_for_validation:
+        type: string
+      title_in_portal:
+        type: string
+      raw_title_in_portal:
+        type: string
+      visible_in_portal:
+        type: string
+      editable_in_portal:
+        type: string
+      required_in_portal:
+        type: string
+      tag:
+        type: string
+      created_at:
+        type: string
+      updated_at:
+        type: string
+externalDocs:
+  description: Find out more about Swagger
+  url: 'http://swagger.io'

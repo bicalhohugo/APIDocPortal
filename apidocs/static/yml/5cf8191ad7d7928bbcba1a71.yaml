@@ -1,0 +1,142 @@
+swagger: '2.0'
+info:
+  description: APIs para operacoes referente a clientes
+  version: 1.0.0
+  title: APIs - Customers
+  termsOfService: 'http://www.nextel.com.br/terms/'
+  contact:
+    email: IT_Arquitetura@nextel.com.br
+host: ms-apis-uat.nextel.com.br
+tags:
+  - name: Invoice
+    description: Informacoes de fatura
+schemes:
+  - https
+paths:
+
+  '/customer/invoice/V1/payment/{code}':
+    get:
+      tags:
+        - Invoice
+      summary: Consulta de fatura do cliente por codigo de pagamento.
+      description: 'Esta API e utilizada para exposicao dos seguintes servicos: 
+      
+      1) get-invoice-by-payment-code'
+      produces:
+        - application/json
+      parameters:
+        - name: code
+          in: path
+          description: Payment code da fatura
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Sucesso
+          schema:
+            $ref: '#/definitions/CustomerPaymentInvoice'
+        '450':
+          description: Dados nao encontrados
+          schema:
+            $ref: '#/definitions/Error'
+        '550':
+          description: Erro desconhecido no provedor
+          schema:
+            $ref: '#/definitions/Error'  
+
+securityDefinitions:
+  
+  customers_cpf:
+    type: oauth2
+    tokenUrl: 'https://ms-apis-uat.nextel.com.br/customers/V1/cpf/cpf/oauth2/token'
+    flow: application
+    scopes: {}
+  nextel_auth:
+    type: oauth2
+    tokenUrl: 'https://ms-apis-uat.nextel.com.br/customers/V1/billing_mail/oauth2/token'
+    flow: application
+    scopes:
+      billing_mail: consulta e-mail de cobranca do cliente
+  installments:
+    type: oauth2
+    tokenUrl: 'https://ms-apis-uat.nextel.com.br/customers/V1/installments/document/oauth2/token'
+    flow: application
+    scopes: {}
+  customer_hierarchy_V1:
+    type: oauth2
+    tokenUrl: 'https://ms-apis-uat.nextel.com.br/customer/hierarchy/V1/oauth2/token'
+    flow: application
+    scopes: {}
+  customer_V1_cost_center_V1:
+    type: oauth2
+    tokenUrl: 'https://ms-apis-uat.nextel.com.br/customer/V1/cost_center/V1/oauth2/token'
+    flow: application
+    scopes: {}
+  customer_V1_contract_information_msisdn:
+    type: oauth2
+    tokenUrl: 'https://ms-apis-uat.nextel.com.br/customer/V1/contract/information/msisdn/oauth2/token'
+    flow: application
+    scopes: {}
+
+definitions:
+
+  CustomerPaymentInvoice:
+    type: object
+    properties: 
+      invoice:
+        $ref: '#/definitions/CustomerInvoiceInfo'
+
+  CustomerInvoiceInfo:
+    type: object
+    required: 
+    - dueDate
+    - remainingValue
+    - id
+    - payer
+    properties: 
+      digitableLine:
+        type: string
+        description: 'Codigo de barras'
+        example: '12345678901-2 12345678901-2 12345678901-2 12345678901-2'
+      dueDate:
+        type: string
+        format: date
+        description: 'Data de vencimento'
+      remainingValue: 
+        type: number
+        format: float
+        description: 'Valor do pagamento'
+      id:
+        type: integer
+        format: int64
+        description: 'PK da fatura'
+      payer:
+        type: string
+        description: 'Nome do sacado'
+      comment:
+        type: string
+        description: 'Referencia de consumo'
+
+  Error:
+    type: object
+    properties:
+      message:
+        type: string
+      detail:
+        type: string
+      providerDetail:
+        $ref: '#/definitions/ProviderDetail'
+
+  ProviderDetail:
+    type: object
+    properties:
+      name:
+        type: string
+      code:
+        type: string
+      message:
+        type: string
+
+externalDocs:
+  description: Find out more about Swagger
+  url: 'http://swagger.io'

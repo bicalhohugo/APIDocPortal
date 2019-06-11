@@ -1,0 +1,80 @@
+swagger: '2.0'
+info:
+  description: APIs para operacoes de inserção e exclusão de serviços para os assinantes no PCRF
+  version: 1.0.0
+  title: APIs - Subscriber Services
+  termsOfService: 'http://www.nextel.com.br/terms/'
+  contact:
+    email: IT_Arquitetura@nextel.com.br
+host: ms-apis-uat.nextel.com.br
+tags:
+  - name: Data Services
+    description: Serviços de Dados
+schemes: 
+  - https
+paths:
+  '/provisioning/V1/data/service/{name}/imsi/{imsi}':
+    delete:
+      tags: 
+        - Data Services
+      summary: Faz a desativacao de um servico de um assinante no PCRF teste
+      description: ""
+      consumes:
+       - application/json
+      parameters: 
+        - name: name
+          in: path
+          required: true
+          type: string
+        - name: imsi
+          in: path
+          required: true
+          type: string
+      responses:
+        '204':
+          description: Serviço desativado com sucesso
+        '200':
+          description: Serviço já está desativado
+        '400':
+          description: Requisicao invalida
+          schema:
+            $ref: '#/definitions/Error'
+        '450':
+          description: Assinante não encontrado
+          schema:
+            $ref: '#/definitions/Error'
+        '451':
+          description: Não é possível atender a requisição
+          schema:
+            $ref: '#/definitions/Error'
+        '550':
+          description: Erro desconhecido no provedor
+          schema:
+            $ref: '#/definitions/Error'
+      
+        
+        
+  
+definitions:
+
+  Error:
+    type: object
+    properties:
+      message:
+        type: string
+      detail:
+        type: string
+      providerDetail:
+        $ref: '#/definitions/ProviderDetail'
+  ProviderDetail:
+    type: object
+    properties:
+      name:
+        type: string
+      code:
+        type: string
+      message:
+        type: string
+        
+        
+        

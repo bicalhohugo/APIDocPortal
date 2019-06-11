@@ -1,0 +1,4 @@
+include nextel-docs/schema.sql
+graft nextel-docs/static
+graft nextel-docs/templates
+global-exclude *.pyc

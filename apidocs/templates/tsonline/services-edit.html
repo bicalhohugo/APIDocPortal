@@ -1,0 +1,860 @@
+{% extends 'base/template.html' %}
+
+{% block header %}
+    {% block title %}TS Online - Serviços e Filas - {% if type == "new" %}Novo Cadastro{% else %}Editar Cadastro{% endif %}{% endblock %}
+{% endblock %}
+
+{% block button_back %}
+
+<button type="submit" form="services" class="d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+    <i class="fas fa-plus fa-sm text-white-50"></i> Salvar Dados
+</button>
+
+{% endblock %}
+
+{% block content %}
+
+<form id="services" name="services" method="post" action="{{ url_for('tsonline_controller.tsonline_service_save') }}" class="user">
+    <input type="hidden" id="service_id" name="service_id" value="{{ service['_id'] }}" />
+    <input type="hidden" id="type" name="type" value="{{ type }}" />
+
+    <div class="row">
+        <div class="col-lg-11">
+            <h4>{{ service['name'] }} - {{ service['version'] }}</h4>
+        </div>
+        <div class="col-lg-1 custom-control custom-checkbox small">
+            <input type="checkbox" class="custom-control-input" id="chk_published" name="chk_published" {% if service['published'] %}checked="checked"{% endif %} />
+            <label for="chk_published" class="custom-control-label">Publicado?</label>
+        </div>
+    </div>
+
+    <hr />
+
+    <div class="form-group row">
+        <label for="description" class="col-sm-2 col-form-label">Descrição:</label>
+        <div class="col-sm-10">
+            <textarea rows="3" class="form-control text-xs" id="description" name="description">{{ service_data['description'] }}</textarea>
+        </div>
+    </div>
+
+    {% if service_data['apis'] %}
+    {% for api in service_data['apis'] %}
+    <div class="form-group row" name="api_line">
+        <label for="apis" class="col-sm-2 col-form-label">API:</label>
+        <div class="col-sm-9">
+            <input type="text" class="form-control text-xs" name="apis" value="{{ api['path'] }}" />
+        </div>
+        <div class="col-sm-1">
+            <a class="btn btn-icon-split btn-primary btn-sm" href="#" onclick="removeLine(this);">
+                <span class="icon text-white-50">
+                    <i class="fas fa-minus"></i>
+                </span>
+            </a>
+            <a class="btn btn-icon-split btn-primary btn-sm" href="#" onclick="addLine(this);">
+                <span class="icon text-white-50">
+                    <i class="fas fa-plus"></i>
+                </span>
+            </a>
+        </div>
+    </div>
+    {% endfor %}
+    {% else %}
+    <div class="form-group row" name="api_line">
+        <label for="apis" class="col-sm-2 col-form-label">API:</label>
+        <div class="col-sm-9">
+            <input type="text" class="form-control text-xs" name="apis" value="" />
+        </div>
+        <div class="col-sm-1">
+            <a class="btn btn-icon-split btn-primary btn-sm" href="#" onclick="removeLine(this);">
+                <span class="icon text-white-50">
+                    <i class="fas fa-minus"></i>
+                </span>
+            </a>
+            <a class="btn btn-icon-split btn-primary btn-sm" href="#" onclick="addLine(this);">
+                <span class="icon text-white-50">
+                    <i class="fas fa-plus"></i>
+                </span>
+            </a>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if service_data['orchestrators'] %}
+    {% for orchestrator in service_data['orchestrators'] %}
+    <div class="form-group row" name="orchestrator_line">
+        <label for="orchestrators" class="col-sm-2 col-form-label">Orquestrado por:</label>
+        <div class="col-sm-9">
+            <input type="text" class="form-control text-xs" name="orchestrators" value="{{ orchestrator['name'] }}" />
+        </div>
+        <div class="col-sm-1">
+            <a class="btn btn-icon-split btn-primary btn-sm" href="#" onclick="removeLine(this);">
+                <span class="icon text-white-50">
+                    <i class="fas fa-minus"></i>
+                </span>
+            </a>
+            <a class="btn btn-icon-split btn-primary btn-sm" href="#" onclick="addLine(this);">
+                <span class="icon text-white-50">
+                    <i class="fas fa-plus"></i>
+                </span>
+            </a>
+        </div>
+    </div>
+    {% endfor %}
+    {% else %}
+    <div class="form-group row" name="orchestrator_line">
+        <label for="orchestrators" class="col-sm-2 col-form-label">Orquestrado por:</label>
+        <div class="col-sm-9">
+            <input type="text" class="form-control text-xs" name="orchestrators" value="" />
+        </div>
+        <div class="col-sm-1">
+            <a class="btn btn-icon-split btn-primary btn-sm" href="#" onclick="removeLine(this);">
+                <span class="icon text-white-50">
+                    <i class="fas fa-minus"></i>
+                </span>
+            </a>
+            <a class="btn btn-icon-split btn-primary btn-sm" href="#" onclick="addLine(this);">
+                <span class="icon text-white-50">
+                    <i class="fas fa-plus"></i>
+                </span>
+            </a>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="form-group row">
+        <label for="provider" class="col-sm-2 col-form-label">Provedor:</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control text-xs" id="provider" name="provider" value="{{ service_data['provider']['name'] if service_data['provider'] else '' }}" />
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label for="adapter" class="col-sm-2 col-form-label">Adaptador:</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control text-xs" id="adapter" name="adapter" value="{{ service_data['adapter']['name'] if service_data['adapter'] else '' }}" />
+        </div>
+    </div>
+
+    <hr />
+
+    <div class="form-group row">
+        <div class="col-sm-12">
+            <h6 class="h4">Histórico de Alterações</h6>
+        </div>
+    </div>
+
+    <hr />
+
+    <div class="form-group row">
+        <div class="col-sm-12">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th class="text-xs" width="10%">Versão</th>
+                            <th class="text-xs" width="10%">Data</th>
+                            <th class="text-xs" width="20%">Autor</th>
+                            <th class="text-xs" width="30%">Projeto</th>
+                            <th class="text-xs" width="30%">Descrição</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if service_histories.count() > 0 %}
+                        {% for service_history in service_histories %}
+                        <tr>
+                            <input type="hidden" name="history_id" value="{{ service_history['_id'] }}" />
+                            <input type="hidden" name="history_service_id" value="{{ service_history['service_id'] }}" />
+                            <input type="hidden" name="history_service_name" value="{{ service['name'] }}" />
+                            <td><input readonly type="text" class="form-control text-xs" name="history_service_version" value="{{ service_history['service_version'] }}" /></td>
+                            <td><input {% if service_history['service_version'] != service['version'] %}readonly{% endif %} type="text" class="form-control text-xs" name="history_date" value="{{ service_history['date'] }}" /></td>
+                            <td><input {% if service_history['service_version'] != service['version'] %}readonly{% endif %} type="text" class="form-control text-xs" name="history_author" value="{{ service_history['author'] }}" /></td>
+                            <td><input {% if service_history['service_version'] != service['version'] %}readonly{% endif %} type="text" class="form-control text-xs" name="history_project" value="{{ service_history['project'] }}" /></td>
+                            <td><input {% if service_history['service_version'] != service['version'] %}readonly{% endif %} type="text" class="form-control text-xs" name="history_description" value="{{ service_history['description'] }}" /></td>
+                        </tr>
+                        {% endfor %}
+                        {% endif %}
+                        {% if not service_history %}
+                        <tr>
+                            <input type="hidden" name="history_id" value="0" />
+                            <input type="hidden" name="history_service_id" value="{{ service['_id'] }}" />
+                            <input type="hidden" name="history_service_name" value="{{ service['name'] }}" />
+                            <td><input readonly type="text" class="form-control text-xs" name="history_service_version" value="{{ service['version'] }}" /></td>
+                            <td><input type="text" class="form-control text-xs" name="history_date" value="" /></td>
+                            <td><input type="text" class="form-control text-xs" name="history_author" value="" /></td>
+                            <td><input type="text" class="form-control text-xs" name="history_project" value="" /></td>
+                            <td><input type="text" class="form-control text-xs" name="history_description" value="" /></td>
+                        </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <hr />
+
+    <div class="form-group row">
+        <div class="col-sm-12">
+            <h6 class="h4">Exemplo de Mensagem do Provedor</h6>
+        </div>
+    </div>
+
+    <hr />
+
+    <div class="form-group row">
+        <div class="col-sm-12">
+            <label class="font-weight-bold">Requisição</label>
+            <textarea rows="10" class="form-control text-xs" id="request_example" name="request_example">{{ service_data['provider_example_message']['request'] if service_data['provider_example_message'] else '' }}</textarea>
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <div class="col-sm-12">
+            <label class="font-weight-bold">Resposta de Sucesso</label>
+            <textarea rows="10" class="form-control text-xs" id="reply_success" name="reply_success">{{ service_data['provider_example_message']['reply_success'] if service_data['provider_example_message'] else '' }}</textarea>
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <div class="col-sm-12">
+            <label class="font-weight-bold">Resposta de Erro</label>
+            <textarea rows="10" class="form-control text-xs" id="reply_error" name="reply_error">{{ service_data['provider_example_message']['reply_error'] if service_data['provider_example_message'] else '' }}</textarea>
+        </div>
+    </div>
+
+    <hr />
+
+    <div class="form-group row">
+        <div class="col-sm-12">
+            <h6 class="h4">Mapeamento de Entrada</h6>
+        </div>
+    </div>
+
+    <hr />
+
+    <div class="form-group row">
+        <div class="col-sm-12">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTableMappingInput" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th class="text-xs" width="15%">Canônico</th>
+                            <th class="text-xs" width="20%">Descrição</th>
+                            <th class="text-xs" width="10%">Obrigatório</th>
+                            <th class="text-xs" width="10%">Tipo de Dado</th>
+                            <th class="text-xs" width="10%">Dominio</th>
+                            <th class="text-xs" width="15%">Tag Provedor</th>
+                            <th class="text-xs" width="10%">Regras MS</th>
+                            <th class="text-xs" width="10%">Opções</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if service_data['mapping'] %}
+                        {% for mapping_input in service_data['mapping']['input'] %}
+                        <tr name="table_mapping_input_row">
+                            <td><input type="text" class="form-control text-xs" name="mapping_input_canonical" value="{{ mapping_input['canonical'] }}" /></td>
+                            <td><input type="text" class="form-control text-xs" name="mapping_input_description" value="{{ mapping_input['description'] }}" /></td>
+                            <td><input type="text" class="form-control text-xs" name="mapping_input_required" value="{{ mapping_input['required'] }}" /></td>
+                            <td><input type="text" class="form-control text-xs" name="mapping_input_data_type" value="{{ mapping_input['data_type'] }}" /></td>
+                            <td><input type="text" class="form-control text-xs" name="mapping_input_domain" value="{{ mapping_input['domain'] }}" /></td>
+                            <td><input type="text" class="form-control text-xs" name="mapping_input_provider_tag" value="{{ mapping_input['provider_tag'] }}" /></td>
+                            <td><input type="text" class="form-control text-xs" name="mapping_input_ms_rules" value="{{ mapping_input['ms_rules'] }}" /></td>
+                            <td>
+                                <a class="btn btn-icon-split btn-primary btn-sm" href="#" onclick="removeLine(this);">
+                                    <span class="icon text-white-50">
+                                        <i class="fas fa-minus"></i>
+                                    </span>
+                                </a>
+                                <a class="btn btn-icon-split btn-primary btn-sm" href="#" onclick="addLine(this);">
+                                    <span class="icon text-white-50">
+                                        <i class="fas fa-plus"></i>
+                                    </span>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        {% else %}
+                        <tr name="table_mapping_input_row">
+                            <td><input type="text" class="form-control text-xs" name="mapping_input_canonical" value="" /></td>
+                            <td><input type="text" class="form-control text-xs" name="mapping_input_description" value="" /></td>
+                            <td><input type="text" class="form-control text-xs" name="mapping_input_required" value="" /></td>
+                            <td><input type="text" class="form-control text-xs" name="mapping_input_data_type" value="" /></td>
+                            <td><input type="text" class="form-control text-xs" name="mapping_input_domain" value="" /></td>
+                            <td><input type="text" class="form-control text-xs" name="mapping_input_provider_tag" value="" /></td>
+                            <td><input type="text" class="form-control text-xs" name="mapping_input_ms_rules" value="" /></td>
+                            <td>
+                                <a class="btn btn-icon-split btn-primary btn-sm" href="#" onclick="removeLine(this);">
+                                    <span class="icon text-white-50">
+                                        <i class="fas fa-minus"></i>
+                                    </span>
+                                </a>
+                                <a class="btn btn-icon-split btn-primary btn-sm" href="#" onclick="addLine(this);">
+                                    <span class="icon text-white-50">
+                                        <i class="fas fa-plus"></i>
+                                    </span>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <hr />
+
+    <div class="form-group row">
+        <div class="col-sm-12">
+            <h6 class="h4">Mapeamento de Saida</h6>
+        </div>
+    </div>
+
+    <hr />
+
+    <div class="form-group row">
+        <div class="col-sm-12">
+            <label class="font-weight-bold">Mapeamentos em Caso de Sucesso</label>
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTableMappingSuccessOutput" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th class="text-xs" width="15%">Canônico</th>
+                            <th class="text-xs" width="20%">Descrição</th>
+                            <th class="text-xs" width="10%">Obrigatório</th>
+                            <th class="text-xs" width="10%">Tipo de Dado</th>
+                            <th class="text-xs" width="10%">Dominio</th>
+                            <th class="text-xs" width="15%">Tag Provedor</th>
+                            <th class="text-xs" width="10%">Regras MS</th>
+                            <th class="text-xs" width="10%">Opções</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if service_data['mapping'] %}
+                        {% for mapping_success in service_data['mapping']['success_output'] %}
+                        <tr name="table_mapping_success_row">
+                            <td><input type="text" class="form-control text-xs" name="mapping_success_canonical" value="{{ mapping_success['canonical'] }}" /></td>
+                            <td><input type="text" class="form-control text-xs" name="mapping_success_description" value="{{ mapping_success['description'] }}" /></td>
+                            <td><input type="text" class="form-control text-xs" name="mapping_success_required" value="{{ mapping_success['required'] }}" /></td>
+                            <td><input type="text" class="form-control text-xs" name="mapping_success_data_type" value="{{ mapping_success['data_type'] }}" /></td>
+                            <td><input type="text" class="form-control text-xs" name="mapping_success_domain" value="{{ mapping_success['domain'] }}" /></td>
+                            <td><input type="text" class="form-control text-xs" name="mapping_success_provider_tag" value="{{ mapping_success['provider_tag'] }}" /></td>
+                            <td><input type="text" class="form-control text-xs" name="mapping_success_ms_rules" value="{{ mapping_success['ms_rules'] }}" /></td>
+                            <td>
+                                <a class="btn btn-icon-split btn-primary btn-sm" href="#" onclick="removeLine(this);">
+                                    <span class="icon text-white-50">
+                                        <i class="fas fa-minus"></i>
+                                    </span>
+                                </a>
+                                <a class="btn btn-icon-split btn-primary btn-sm" href="#" onclick="addLine(this);">
+                                    <span class="icon text-white-50">
+                                        <i class="fas fa-plus"></i>
+                                    </span>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        {% else %}
+                        <tr name="table_mapping_success_row">
+                            <td><input type="text" class="form-control text-xs" name="mapping_success_canonical" value="" /></td>
+                            <td><input type="text" class="form-control text-xs" name="mapping_success_description" value="" /></td>
+                            <td><input type="text" class="form-control text-xs" name="mapping_success_required" value="" /></td>
+                            <td><input type="text" class="form-control text-xs" name="mapping_success_data_type" value="" /></td>
+                            <td><input type="text" class="form-control text-xs" name="mapping_success_domain" value="" /></td>
+                            <td><input type="text" class="form-control text-xs" name="mapping_success_provider_tag" value="" /></td>
+                            <td><input type="text" class="form-control text-xs" name="mapping_success_ms_rules" value="" /></td>
+                            <td>
+                                <a class="btn btn-icon-split btn-primary btn-sm" href="#" onclick="removeLine(this);">
+                                    <span class="icon text-white-50">
+                                        <i class="fas fa-minus"></i>
+                                    </span>
+                                </a>
+                                <a class="btn btn-icon-split btn-primary btn-sm" href="#" onclick="addLine(this);">
+                                    <span class="icon text-white-50">
+                                        <i class="fas fa-plus"></i>
+                                    </span>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <div class="col-sm-12">
+            <label class="font-weight-bold">Mapeamentos em Caso de Erro</label>
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTableMappingErrorOutput" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th class="text-xs" width="20%">Canônico</th>
+                            <th class="text-xs" width="20%">Descrição</th>
+                            <th class="text-xs" width="10%">Obrigatório</th>
+                            <th class="text-xs" width="10%">Tipo de Dado</th>
+                            <th class="text-xs" width="20%">Tag Provedor</th>
+                            <th class="text-xs" width="10%">Regras MS</th>
+                            <th class="text-xs" width="10%">Opções</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if service_data['mapping'] %}
+                        {% for mapping_error in service_data['mapping']['error_output'] %}
+                        <tr name="table_mapping_error_row">
+                            <td><input type="text" class="form-control text-xs" name="mapping_error_canonical" value="{{ mapping_error['canonical'] }}" /></td>
+                            <td><input type="text" class="form-control text-xs" name="mapping_error_description" value="{{ mapping_error['description'] }}" /></td>
+                            <td><input type="text" class="form-control text-xs" name="mapping_error_required" value="{{ mapping_error['required'] }}" /></td>
+                            <td><input type="text" class="form-control text-xs" name="mapping_error_data_type" value="{{ mapping_error['data_type'] }}" /></td>
+                            <td><input type="text" class="form-control text-xs" name="mapping_error_provider_tag" value="{{ mapping_error['provider_tag'] }}" /></td>
+                            <td><input type="text" class="form-control text-xs" name="mapping_error_ms_rules" value="{{ mapping_error['ms_rules'] }}" /></td>
+                            <td>
+                                <a class="btn btn-icon-split btn-primary btn-sm" href="#" onclick="removeLine(this);">
+                                    <span class="icon text-white-50">
+                                        <i class="fas fa-minus"></i>
+                                    </span>
+                                </a>
+                                <a class="btn btn-icon-split btn-primary btn-sm" href="#" onclick="addLine(this);">
+                                    <span class="icon text-white-50">
+                                        <i class="fas fa-plus"></i>
+                                    </span>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        {% else %}
+                        <tr name="table_mapping_error_row">
+                            <td><input type="text" class="form-control text-xs" name="mapping_error_canonical" value="" /></td>
+                            <td><input type="text" class="form-control text-xs" name="mapping_error_description" value="" /></td>
+                            <td><input type="text" class="form-control text-xs" name="mapping_error_required" value="" /></td>
+                            <td><input type="text" class="form-control text-xs" name="mapping_error_data_type" value="" /></td>
+                            <td><input type="text" class="form-control text-xs" name="mapping_error_provider_tag" value="" /></td>
+                            <td><input type="text" class="form-control text-xs" name="mapping_error_ms_rules" value="" /></td>
+                            <td>
+                                <a class="btn btn-icon-split btn-primary btn-sm" href="#" onclick="removeLine(this);">
+                                    <span class="icon text-white-50">
+                                        <i class="fas fa-minus"></i>
+                                    </span>
+                                </a>
+                                <a class="btn btn-icon-split btn-primary btn-sm" href="#" onclick="addLine(this);">
+                                    <span class="icon text-white-50">
+                                        <i class="fas fa-plus"></i>
+                                    </span>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <hr />
+
+    <div class="form-group row">
+        <div class="col-sm-12">
+            <h6 class="h4">Considerações Importantes</h6>
+        </div>
+    </div>
+
+    <hr />
+
+    <div class="form-group row">
+        <div class="col-sm-12">
+            <textarea rows="3" class="form-control text-xs" id="important_notes" name="important_notes">{{ service_data['important_notes'] }}</textarea>
+        </div>
+    </div>
+
+    <hr />
+
+    <div class="form-group row">
+        <div class="col-sm-12">
+            <h6 class="h4">Códigos de Retorno</h6>
+        </div>
+    </div>
+
+    <hr />
+
+    <div class="form-group row">
+        <div class="col-sm-12">
+            <label class="font-weight-bold">Condição de Sucesso</label>
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTableReturnCodeSuccess" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th class="text-xs" width="25%">HTTP Status</th>
+                            <th class="text-xs" width="25%">Mensagem</th>
+                            <th class="text-xs" width="40%">Condições de Sucesso (Retorno Provedor)</th>
+                            <th class="text-xs" width="10%">Opções</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if service_data['return_code'] %}
+                        {% for return_success in service_data['return_code']['success'] %}
+                        <tr name="table_return_code_success_row">
+                            <td><input type="text" class="form-control text-xs" name="success_http_status" value="{{ return_success['http_status'] }}" /></td>
+                            <td><input type="text" class="form-control text-xs" name="success_message" value="{{ return_success['message'] }}" /></td>
+                            <td><input type="text" class="form-control text-xs" name="success_provider_condition" value="{{ return_success['provider_condition'] }}" /></td>
+                            <td>
+                                <a class="btn btn-icon-split btn-primary btn-sm" href="#" onclick="removeLine(this);">
+                                    <span class="icon text-white-50">
+                                        <i class="fas fa-minus"></i>
+                                    </span>
+                                </a>
+                                <a class="btn btn-icon-split btn-primary btn-sm" href="#" onclick="addLine(this);">
+                                    <span class="icon text-white-50">
+                                        <i class="fas fa-plus"></i>
+                                    </span>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        {% else %}
+                        <tr name="table_return_code_success_row">
+                            <td><input type="text" class="form-control text-xs" name="success_http_status" value="" /></td>
+                            <td><input type="text" class="form-control text-xs" name="success_message" value="" /></td>
+                            <td><input type="text" class="form-control text-xs" name="success_provider_condition" value="" /></td>
+                            <td>
+                                <a class="btn btn-icon-split btn-primary btn-sm" href="#" onclick="removeLine(this);">
+                                    <span class="icon text-white-50">
+                                        <i class="fas fa-minus"></i>
+                                    </span>
+                                </a>
+                                <a class="btn btn-icon-split btn-primary btn-sm" href="#" onclick="addLine(this);">
+                                    <span class="icon text-white-50">
+                                        <i class="fas fa-plus"></i>
+                                    </span>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <div class="col-sm-12">
+            <label class="font-weight-bold">Condição de Erro</label>
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTableReturnCodeError" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th class="text-xs" width="20%">HTTP Status</th>
+                            <th class="text-xs" width="25%">Mensagem</th>
+                            <th class="text-xs" width="25%">Detalhe</th>
+                            <th class="text-xs" width="20%">Condições de Erro (Retorno Provedor)</th>
+                            <th class="text-xs" width="10%">Opções</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if service_data['return_code'] %}
+                        {% for return_error in service_data['return_code']['error'] %}
+                        <tr name="table_return_code_error_row">
+                            <td><input type="text" class="form-control text-xs" name="error_http_status" value="{{ return_error['http_status'] }}" /></td>
+                            <td><input type="text" class="form-control text-xs" name="error_message" value="{{ return_error['message'] }}" /></td>
+                            <td><input type="text" class="form-control text-xs" name="error_detail" value="{{ return_error['detail'] }}" /></td>
+                            <td><input type="text" class="form-control text-xs" name="error_provider_condition" value="{{ return_error['provider_condition'] }}" /></td>
+                            <td>
+                                <a class="btn btn-icon-split btn-primary btn-sm" href="#" onclick="removeLine(this);">
+                                    <span class="icon text-white-50">
+                                        <i class="fas fa-minus"></i>
+                                    </span>
+                                </a>
+                                <a class="btn btn-icon-split btn-primary btn-sm" href="#" onclick="addLine(this);">
+                                    <span class="icon text-white-50">
+                                        <i class="fas fa-plus"></i>
+                                    </span>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        {% else %}
+                        <tr name="table_return_code_error_row">
+                            <td><input type="text" class="form-control text-xs" name="error_http_status" value="" /></td>
+                            <td><input type="text" class="form-control text-xs" name="error_message" value="" /></td>
+                            <td><input type="text" class="form-control text-xs" name="error_detail" value="" /></td>
+                            <td><input type="text" class="form-control text-xs" name="error_provider_condition" value="" /></td>
+                            <td>
+                                <a class="btn btn-icon-split btn-primary btn-sm" href="#" onclick="removeLine(this);">
+                                    <span class="icon text-white-50">
+                                        <i class="fas fa-minus"></i>
+                                    </span>
+                                </a>
+                                <a class="btn btn-icon-split btn-primary btn-sm" href="#" onclick="addLine(this);">
+                                    <span class="icon text-white-50">
+                                        <i class="fas fa-plus"></i>
+                                    </span>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <hr />
+
+    <div class="form-group row">
+        <div class="col-sm-12">
+            <h6 class="h4">Configuração do Adaptador</h6>
+        </div>
+    </div>
+
+    <hr />
+
+    <div class="form-group row">
+        <div class="col-sm-2">
+            <label class="font-weight-bold">Tipo de Adaptador:</label>
+        </div>
+        <div class="dropdown col-sm-4">
+            <button class="btn btn-primary btn-small dropdown-toggle text-xs" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Selecione
+            </button>
+            <div class="dropdown-menu animated--fade-in" aria-labelledby="dropdownMenuButton" x-placement="bottom-start" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(0px, 38px, 0px);">
+                {% for adapter_type in adapter_types %}
+                    <a class="dropdown-item" href="#" adapter_type="{{ adapter_type['type'] }}" onclick="changeAdapterType(this);">{{ adapter_type['type'] }}</a>
+                {% endfor %}
+            </div>
+          </div>
+        <div class="col-sm-4 text-right">
+            <label class="font-weight-bold">Adaptador selecionado:</label>
+        </div>
+        <div class="col-sm-2">
+            {% if service_data['adapter_configuration'] %}
+                {% if service_data['adapter_configuration']['db'] %}
+                <input name="selected_adapter_type" readonly class="form-control text-xs" type="text" value="db" />
+                {% elif service_data['adapter_configuration']['ws'] %}
+                <input name="selected_adapter_type" readonly class="form-control text-xs" type="text" value="ws" />
+                {% else %}
+                <input name="selected_adapter_type" readonly class="form-control text-xs" type="text" value="Nenhum" />
+                {% endif %}
+            {% else %}
+            <input name="selected_adapter_type" readonly class="form-control text-xs" type="text" value="Nenhum" />
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="form-group row d-none adapter_type_not_show" name="ws_adapter_type_configuration">
+        <div class="col-sm-12">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTableWsAdapter" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th class="text-xs" width="30%">URI</th>
+                            <th class="text-xs" width="15%">Http Method</th>
+                            <th class="text-xs" width="15%">Authentication Type</th>
+                            <th class="text-xs" width="10%">Timeout</th>
+                            <th class="text-xs" width="10%">Encoding</th>
+                            <th class="text-xs" width="15%">Content Type</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><input type="text" class="form-control text-xs" name="ws_uri" value="{{ service_data['adapter_configuration']['ws']['uri'] if service_data['adapter_configuration'] and service_data['adapter_configuration']['ws'] else '' }}" /></td>
+                            <td><input type="text" class="form-control text-xs" name="ws_http_method" value="{{ service_data['adapter_configuration']['ws']['http_method'] if service_data['adapter_configuration'] and service_data['adapter_configuration']['ws'] else '' }}" /></td>
+                            <td><input type="text" class="form-control text-xs" name="ws_authentication_type" value="{{ service_data['adapter_configuration']['ws']['authentication_type'] if service_data['adapter_configuration'] and service_data['adapter_configuration']['ws'] else '' }}" /></td>
+                            <td><input type="text" class="form-control text-xs" name="ws_timeout" value="{{ service_data['adapter_configuration']['ws']['timeout'] if service_data['adapter_configuration'] and service_data['adapter_configuration']['ws'] else '' }}" /></td>
+                            <td><input type="text" class="form-control text-xs" name="ws_encoding" value="{{ service_data['adapter_configuration']['ws']['encoding'] if service_data['adapter_configuration'] and service_data['adapter_configuration']['ws'] else '' }}" /></td>
+                            <td><input type="text" class="form-control text-xs" name="ws_content_type" value="{{ service_data['adapter_configuration']['ws']['content_type'] if service_data['adapter_configuration'] and service_data['adapter_configuration']['ws'] else '' }}" /></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group row d-none adapter_type_not_show" name="db_adapter_type_configuration">
+        <div class="col-sm-12">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTableDbAdapter" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th class="text-xs" width="25%">Datasource</th>
+                            <th class="text-xs" width="25%">Sql-Type</th>
+                            <th class="text-xs" width="50%">Statement</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><input type="text" class="form-control text-xs" name="db_datasource" value="{{ service_data['adapter_configuration']['db']['datasource'] if service_data['adapter_configuration'] and service_data['adapter_configuration']['db'] else '' }}" /></td>
+                            <td><input type="text" class="form-control text-xs" name="db_sql_type" value="{{ service_data['adapter_configuration']['db']['sql_type'] if service_data['adapter_configuration'] and service_data['adapter_configuration']['db'] else '' }}" /></td>
+                            <td><textarea rows="5" class="form-control text-xs" id="db_statement" name="db_statement">{{ service_data['adapter_configuration']['db']['statement'] if service_data['adapter_configuration'] and service_data['adapter_configuration']['db'] else '' }}</textarea></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <hr />
+
+    <div class="form-group row">
+        <div class="col-sm-12">
+            <h6 class="h4">Fila do RabbitMQ</h6>
+        </div>
+    </div>
+
+    <hr />
+
+    <div class="form-group row">
+        <div class="col-sm-2">
+            <label class="font-weight-bold">Serviço é uma Fila?</label>
+        </div>
+        <div class="dropdown col-sm-4">
+            <button class="btn btn-primary btn-small dropdown-toggle text-xs" type="button" id="dropdownRmqMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Selecione
+            </button>
+            <div class="dropdown-menu animated--fade-in" aria-labelledby="dropdownRmqMenuButton" x-placement="bottom-start" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(0px, 38px, 0px);">
+                <a class="dropdown-item" href="#" rmq_answer="Sim" onclick="changeRmq(this);">Sim</a>
+                <a class="dropdown-item" href="#" rmq_answer="Não" onclick="changeRmq(this);">Não</a>
+            </div>
+          </div>
+        <div class="col-sm-4 text-right">
+            <label class="font-weight-bold">Fila RabbitMQ ?</label>
+        </div>
+        <div class="col-sm-2">
+            {% if service_data['rmq'] %}
+                {% if service_data['rmq']['is_queue'] %}
+                <input name="selected_rmq" readonly class="form-control text-xs" type="text" value="Sim" />
+                {% else %}
+                <input name="selected_rmq" readonly class="form-control text-xs" type="text" value="Não" />
+                {% endif %}
+            {% else %}
+            <input name="selected_rmq" readonly class="form-control text-xs" type="text" value="Não" />
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="form-group row d-none rmq_not_show" name="rmq_configuration">
+        <div class="col-sm-12">
+            <label class="font-weight-bold">Políticas de Retentativas</label>
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTableRmqRetryPolicy" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th class="text-xs" width="30%">Retentativa</th>
+                            <th class="text-xs" width="35%">Repetições</th>
+                            <th class="text-xs" width="35%">Intervalo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><input type="text" class="form-control text-xs" name="rmq_retry" value="{{ service_data['rmq']['retry_policy']['retry'] if service_data['rmq'] and service_data['rmq']['retry_policy'] else '' }}" /></td>
+                            <td><input type="text" class="form-control text-xs" name="rmq_loop" value="{{ service_data['rmq']['retry_policy']['loop'] if service_data['rmq'] and service_data['rmq']['retry_policy'] else '' }}" /></td>
+                            <td><input type="text" class="form-control text-xs" name="rmq_interval" value="{{ service_data['rmq']['retry_policy']['interval'] if service_data['rmq'] and service_data['rmq']['retry_policy'] else '' }}" /></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="col-sm-12">
+            <label class="font-weight-bold">Configuração do RabbitMQ</label>
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTableRmqConfig" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th class="text-xs" width="25%">Exchange</th>
+                            <th class="text-xs" width="25%">Queue</th>
+                            <th class="text-xs" width="25%">Retry Queue</th>
+                            <th class="text-xs" width="25%">DLX Queue</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><input type="text" class="form-control text-xs" name="rmq_exchange" value="{{ service_data['rmq']['configuration']['exchange'] if service_data['rmq'] and service_data['rmq']['configuration'] else '' }}" /></td>
+                            <td><input type="text" class="form-control text-xs" name="rmq_principal_queue" value="{{ service_data['rmq']['configuration']['principal_queue'] if service_data['rmq'] and service_data['rmq']['configuration'] else '' }}" /></td>
+                            <td><input type="text" class="form-control text-xs" name="rmq_retry_queue" value="{{ service_data['rmq']['configuration']['retry_queue'] if service_data['rmq'] and service_data['rmq']['configuration'] else '' }}" /></td>
+                            <td><input type="text" class="form-control text-xs" name="rmq_dlx_queue" value="{{ service_data['rmq']['configuration']['dlx_queue'] if service_data['rmq'] and service_data['rmq']['configuration'] else '' }}" /></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</form>
+
+{% endblock %}
+
+{% block script %}
+    <script type="text/javascript">
+        $('#infoModal').modal('show');
+
+        $(document).ready(function () {
+            input_adapter_type = $("input[name='selected_adapter_type']").val();
+            if (input_adapter_type != "Nenhum") {
+                obj = $("div[name='" + input_adapter_type + "_adapter_type_configuration']");
+                obj.removeClass("d-none");
+            }
+
+            selected_rmq = $("input[name='selected_rmq']").val();
+            if (selected_rmq == "Sim") {
+                obj = $("div[name='rmq_configuration']");
+                obj.removeClass("d-none");
+            }
+        });
+
+        function cleanDivInput(div) {
+            inputs = $("input", div)
+
+            for (x = 0; x < inputs.length; x++) {
+                input = $(inputs[x]);
+
+                input.val("");
+            }
+        }
+
+        function addLine(obj) {
+            event.preventDefault();
+            div = $(obj).parent().parent();
+            cln = div.clone();
+            cleanDivInput(cln);
+            cln.insertAfter(div);
+        }
+
+        function removeLine(obj) {
+            event.preventDefault();
+            div = $(obj).parent().parent();
+            div_count = $("[name='" + div.attr('name') + "']").length;
+
+            if (div_count > 1) {
+                div.remove();
+            }
+        }
+
+        function changeAdapterType(obj) {
+            adapter_type = $(obj).attr("adapter_type");
+            $(".adapter_type_not_show").addClass("d-none");
+
+            $("div[name='" + adapter_type + "_adapter_type_configuration']").removeClass("d-none");
+
+            $("input[name='selected_adapter_type']").val(adapter_type);
+
+            if (event)
+                event.preventDefault();
+        }
+
+        function changeRmq(obj) {
+            rmq_answer = $(obj).attr("rmq_answer");
+
+            if (rmq_answer == "Sim") {
+                $("div[name='rmq_configuration']").removeClass("d-none");
+            }
+            else {
+                $("div[name='rmq_configuration']").addClass("d-none");
+            }
+
+            $("input[name='selected_rmq']").val(rmq_answer);
+
+            if (event)
+                event.preventDefault();
+        }
+
+    </script>
+{% endblock %}

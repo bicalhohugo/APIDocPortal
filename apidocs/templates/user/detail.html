@@ -1,0 +1,86 @@
+{% extends 'base/template.html' %}
+
+{% block header %}
+    {% block title %}Detalhes do Usuário{% endblock %}
+{% endblock %}
+
+{% block button_back %}
+
+<a href="{{ url_for('user_controller.user_list', status=status) }}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+    <i class="fas fa-arrow-left fa-sm text-white-50"></i> Voltar
+</a>
+
+{% endblock %}
+
+{% block content %}
+
+<div class="row">
+	<div class="col-lg-12">
+        <form id="userchanges" name="userchanges" method="post" action="{{ url_for('user_controller.user_detail_save') }}" class="user">
+            <input type="hidden" name="user_id" value="{{ user['_id'] }}"></status>
+            <input type="hidden" name="status" value="{{ status }}"></status>
+            <div class="form-group row">
+                <label for="email" class="col-sm-2 col-form-label">E-mail</label>
+                <div class="col-sm-10">
+                    <input type="text" {% if status != "A" %}readonly{% endif %} class="form-control{% if status != "A" %}-plaintext{% endif %}" id="new_email" name="new_email" value="{{ user['email'] }}">
+                </div>
+            </div>
+            <hr />
+            <div class="form-group row">
+                <label for="fullname" class="col-sm-2 col-form-label">Nome</label>
+                <div class="col-sm-10">
+                    <input type="text" {% if status == 'P' or status == 'D' %}readonly{% endif %} class="form-control{% if status == 'P' or status == 'D' %}-plaintext{% endif %}" id="new_name" name="new_name" value="{{ user['name'] }}">
+                </div>
+            </div>        
+            <div class="form-group row {% if status == 'P' or status == 'D' %}d-none{% endif %}">
+                <label for="password" class="col-sm-2 col-form-label">Nova Senha</label>
+                <div class="col-sm-10">
+                    <input type="password" class="form-control" id="new_password" name="new_password" placeholder="Nova senha...">
+                </div>
+            </div>
+            <div class="form-group row {% if status == 'P' or status == 'D' %}d-none{% endif %}">
+                <label for="confirmpassword" class="col-sm-2 col-form-label">Confirme sua nova senha</label>
+                <div class="col-sm-10">
+                    <input type="password" class="form-control" id="confirm_new_password" name="confirm_new_password" placeholder="Confirme a nova senha...">
+                </div>
+            </div>
+            <hr />
+            <div class="form-group row">
+                <label for="status" class="col-sm-2 col-form-label">Situação</label>
+                <div class="col-sm-10">
+                    <input type="text" readonly class="form-control-plaintext {% if status == "A" %}d-none{% endif %}" id="status_text" name="status_text" value="{{ show_status_text(user['status']) }}">
+                    <select id="new_status" name="new_status" class="form-control {% if status != "A" %}d-none{% endif %}">
+                        {% for key, value in status_list().items() %}
+                        <option {% if key == user['status'] %}selected="true"{% endif %} value= '{{ key }}'>{{value}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="status" class="col-sm-2 col-form-label">Perfil</label>
+                <div class="col-sm-10">
+                    <input type="text" readonly class="form-control-plaintext {% if status == "A" %}d-none{% endif %}" id="profile_text" name="profile_text" value="{{ show_profile_text(user['profile']) }}">
+                    <select id="new_profile" name="new_profile" class="form-control {% if status != "A" %}d-none{% endif %}">
+                        {% for key, value in profile_list().items() %}
+                        <option {% if key == user['profile'] %}selected="true"{% endif %} value= '{{ key }}'>{{value}}</option>
+                        {% endfor %}
+                    </select>                    
+                </div>
+            </div>            
+            <hr />
+            <div class="form-group row">
+                {% if status == "A" %}            
+                <button type="submit" form="userchanges" class="btn btn-primary btn-sm ml-1">
+                    Salvar Alterações
+                </button>
+                {% else %}                
+                <button type="submit" form="userchanges" class="btn btn-success btn-sm ml-1">
+                    {% if status == 'P' %}Aprovar{% elif status == 'D' %}Reativar{% endif %}
+                </button>
+                {% endif %}
+            </div>  
+        </form>    
+	</div>
+</div>
+
+{% endblock %}

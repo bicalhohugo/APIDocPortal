@@ -1,0 +1,59 @@
+{% import "macros/_macros.html" as macros %}
+{% extends 'base/template.html' %}
+
+{% block header %}
+  {% block title %}Versões {% if rmq %}da Fila:{% else %}do Serviço:{% endif %} {{ service_name }}{% endblock %}
+{% endblock %}
+
+{% block button_back %}
+
+{% if rmq %}
+{% set url_back = 'service_controller.rmq_service_list' %}
+{% else %}
+{% set url_back = 'service_controller.service_list' %}
+{% endif %}
+
+<a href="{{ url_for(url_back) }}" class="d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+    <i class="fas fa-arrow-left fa-sm text-white-50"></i> Voltar
+</a>
+
+{% endblock %}
+
+{% block content %}
+
+{% if rmq %}
+{% set url = 'service_controller.rmq_service_detail' %}
+{% set url_list = 'service_controller.rmq_service_version_list' %}
+{% else %}
+{% set url = 'service_controller.service_detail' %}
+{% set url_list = 'service_controller.service_version_list' %}
+{% endif %}
+
+{% if services.count() > 0 %}
+<div class="row">
+	<div class="col-lg-12">
+		{% for service in services %}
+		<div class="card mb-2">
+			<a class="nav-link" href="{{ url_for(url, id=service['_id']) }}">
+				<span class="font-weight-bolder text-black-50 m-1">{{ service['name'] }}</span>
+				<span class="text-black-50 m-1">{{ service['version'] }}</span>
+				<span class="icon text-black-50">
+					<i class="fas fa-fw fa-angle-right"></i>
+				</span>				
+			</a>
+		</div>
+		{% endfor %}
+	</div>
+</div>
+
+{{ macros.pagination_widget(pagination.pages_array, pagination.actual_page, url_list, service_name=service_name) }}
+
+{% else %}
+<div class="card mb-4 py-3 border-left-warning text-center">Sem registros de Serviços para serem exibidos, no momento!</div>
+{% endif %}
+
+{% endblock %}
+
+{% block script %}
+
+{% endblock %}

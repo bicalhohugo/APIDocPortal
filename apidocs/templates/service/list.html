@@ -1,0 +1,44 @@
+{% import "macros/_macros.html" as macros %}
+{% extends 'base/template.html' %}
+
+{% block header %}
+  {% block title %}Lista de {% if rmq %}Filas{% else %}Serviços{% endif %}{% endblock %}
+{% endblock %}
+
+{% block content %}
+
+{% if rmq %}
+{% set url = 'service_controller.rmq_service_version_list' %}
+{% set url_list = 'service_controller.rmq_service_list' %}
+{% else %}
+{% set url = 'service_controller.service_version_list' %}
+{% set url_list = 'service_controller.service_list' %}
+{% endif %}
+
+{% if services_count > 0 %}
+<div class="row">
+	<div class="col-lg-12">
+		{% for service in services %}
+		<div class="card mb-2">
+			<a class="nav-link" href="{{ url_for(url, service_name=service['name']) }}">
+				<span class="font-weight-bolder text-black-50 m-1">{{ service['name'] }}</span>
+				<span class="icon text-black-50">
+					<i class="fas fa-fw fa-angle-right"></i>
+				</span>				
+			</a>
+		</div>
+		{% endfor %}
+	</div>
+</div>
+
+{{ macros.pagination_widget(pagination.pages_array, pagination.actual_page, url_list) }}
+
+{% else %}
+<div class="card mb-4 py-3 border-left-warning text-center">Sem registros de Serviços para serem exibidos, no momento!</div>
+{% endif %}
+
+{% endblock %}
+
+{% block script %}
+
+{% endblock %}

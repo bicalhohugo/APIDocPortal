@@ -1,0 +1,25 @@
+{% macro pagination_widget(pages, actual_page, endpoint) %}
+{% if pages|length > 1 %}
+<div class="row">
+    <div class="col-sm-1 ml-2 mt-2">
+        <span class="font-weight-bold">Páginas:</span>
+    </div>
+    <div class="col-sm-2">
+        <nav aria-label="Page navigation example">
+            <ul class="pagination">
+                {% for p in pages %}
+                <li class="page-item {% if p == actual_page %}active{% endif %}">
+                    <a href="{{ url_for(endpoint, page_num = p, **kwargs) }}"
+                        class="page-link"
+                        aria-label={{p}}>
+                        <span aria-hidden="true">{{p | safe}}</span>
+                        <span class="sr-only">{{p | safe}}</span>
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+        </nav>
+    </div>
+</div>
+{% endif %}
+{% endmacro %}

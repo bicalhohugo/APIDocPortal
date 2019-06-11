@@ -1,0 +1,145 @@
+{% extends 'base/template.html' %}
+
+{% block header %}
+  {% block title %}Pesquisa{% endblock %}
+{% endblock %}
+
+{% block content %}
+
+{% if search_count <= 0 %}
+
+<div class="row">
+	<div class="col-lg-12">
+        Não foram encontrados resultado para a sua pesquisa por <label class="font-weight-bold">"{{ search_word }}"</label>:
+    </div>
+</div>
+
+{% else %}
+
+<div class="row">
+	<div class="col-lg-12">
+        Exibindo {{ search_count }} resultado(s) encontrado(s) para a sua pesquisa por <label class="font-weight-bold">{{ search_word }}</label>:
+    </div>
+</div>
+
+<hr/>
+
+<div class="row">
+	<div class="col-lg-12">
+        <div class="card shadow mb-4">
+            <a href="#collapseCardApis" class="d-block card-header py-3" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="collapseCardApis">
+                <h6 class="m-0 font-weight-bold text-primary">{{ api_count }} APIs</h6>
+            </a>
+            <div class="collapse {% if api_count > 0 %}show{% endif %}" id="collapseCardApis">
+                <div class="card-body">
+                {% if api_count == 0 %}
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <span class="text">Nenhum registro encontrado.</span>
+                        </div>
+                    </div>
+                {% endif %}                
+                {% for api in apis %}
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <a href="{{ url_for('api_controller.api_detail', id=api['_id']) }}">{{ api['method'] }} - {{ api['path'] }}  - {{ api['summary'] }}</a>
+                        </div>
+                    </div>
+                {% endfor %}                    
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if g.user["profile"] == "A" or g.user["profile"] == "E" %}
+
+<div class="row">
+	<div class="col-lg-12">
+        <div class="card shadow mb-4">
+            <a href="#collapseCardOrchs" class="d-block card-header py-3" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="collapseCardOrchs">
+                <h6 class="m-0 font-weight-bold text-primary">{{ orch_count }} Orquestradores</h6>
+            </a>
+            <div class="collapse {% if orch_count > 0 %}show{% endif %}" id="collapseCardOrchs">
+                <div class="card-body">
+                {% if orch_count == 0 %}
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <span class="text">Nenhum registro encontrado.</span>
+                        </div>
+                    </div>
+                {% endif %}                
+                {% for orch in orchs %}
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <a href="{{ url_for('orch_controller.orch_detail', id=orch['_id']) }}">{{ orch['name'] }} - {{ orch['version'] }}</a>
+                        </div>
+                    </div>
+                {% endfor %}                    
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+	<div class="col-lg-12">
+        <div class="card shadow mb-4">
+            <a href="#collapseCardServices" class="d-block card-header py-3" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="collapseCardServices">
+                <h6 class="m-0 font-weight-bold text-primary">{{ service_count }} Serviços</h6>
+            </a>
+            <div class="collapse {% if service_count > 0 %}show{% endif %}" id="collapseCardServices">
+                <div class="card-body">
+                {% if service_count == 0 %}
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <span class="text">Nenhum registro encontrado.</span>
+                        </div>
+                    </div>
+                {% endif %}                
+                {% for service in services %}
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <a href="{{ url_for('service_controller.service_detail', id=service['_id']) }}">{{ service['name'] }} - {{ service['version'] }}</a>
+                        </div>
+                    </div>
+                {% endfor %}                    
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+	<div class="col-lg-12">
+        <div class="card shadow mb-4">
+            <a href="#collapseCardQueues" class="d-block card-header py-3" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="collapseCardQueues">
+                <h6 class="m-0 font-weight-bold text-primary">{{ queue_count }} Filas</h6>
+            </a>
+            <div class="collapse {% if queue_count > 0 %}show{% endif %}" id="collapseCardQueues">
+                <div class="card-body">
+                {% if queue_count == 0 %}
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <span class="text">Nenhum registro encontrado.</span>
+                        </div>
+                    </div>
+                {% endif %}
+                {% for queue in queues %}
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <a href="{{ url_for('service_controller.rmq_service_detail', id=queue['_id']) }}">{{ queue['name'] }} - {{ queue['version'] }}</a>
+                        </div>
+                    </div>
+                {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endif %}
+
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,95 @@
+swagger: '2.0'
+info:
+  description: APIs para operacoes referente a clientes
+  version: 1.0.0
+  title: APIs - Assinatura - Contratos
+  termsOfService: 'http://www.nextel.com.br/terms/'
+  contact:
+    email: IT_Arquitetura@nextel.com.br
+host: ms-apis-uat.nextel.com.br
+tags:
+  - name: Assinantes
+schemes:
+  - https
+paths:
+
+  '/assinantes/v1/codigo-cliente/{codigo-cliente}/motivos/{motivos}':
+    get:
+      tags:
+        - Assinantes
+      summary: Consulta assinantes de um cliente filtrando pelos motivos de ativacao/suspensao/reativacao/desativacao
+      description: 'Esta API e utilizada para exposicao dos seguintes servicos:
+      1) get-customer-contracts-by-reason'
+      produces:
+        - application/json
+      parameters:
+        - name: codigo-cliente
+          in: path
+          description: Centro de custo do cliente
+          required: true
+          type: string
+        - name: motivos
+          in: path
+          description: Razao
+          required: true
+          type: string
+
+      responses:
+        '200':
+          description: Sucesso
+          schema:
+              $ref: '#/definitions/Response'
+        '450':
+          description: Dados nao encontrados
+          schema:
+            $ref: '#/definitions/Error'
+        '550':
+          description: Erro desconhecido no provedor
+          schema:
+            $ref: '#/definitions/Error'
+            
+definitions:
+
+  Response:
+    type: object
+    properties:
+      contract:
+        type: array
+        items:
+          $ref: '#/definitions/contractList'
+          
+  contractList:
+    type: object
+    properties:
+      id: 
+        type: integer
+        
+  
+  
+  Error:
+    type: object
+    properties:
+      message:
+        type: string
+      detail:
+        type: string
+      providerDetail:
+        $ref: '#/definitions/ProviderDetail'
+        
+  ProviderDetail:
+    type: object
+    properties:
+      name:
+        type: string
+      code:
+        type: string
+      message:
+        type: string
+        
+
+
+
+
+
+
+

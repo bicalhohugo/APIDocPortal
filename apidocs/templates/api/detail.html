@@ -1,0 +1,159 @@
+{% extends 'base/template.html' %}
+
+{% block header %}
+  {% block title %}Detalhes da API{% endblock %}
+{% endblock %}
+
+{% block content %}
+
+{% if api == None %}
+
+<div class="card mb-4 py-3 border-left-warning text-center">Dados inválidos</div>
+
+{% else %}
+
+<div class="row">
+  <div class="col-lg-12">
+    <div class="card mb-2 {{ css_div_class(api['method']) }}">
+      <div class="nav-link">
+        <div class="btn {{ css_button_class(api['method']) }} btn-sm">
+          <span class="text">{{ api['method'] }}</span>
+        </div>
+        <span class="font-weight-bolder text-black-50 m-1">{{ api['path'] }}</span>
+        <span class="text-black-50 m-1">{{ api['summary'] }}</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-lg-10 pt-2 text-justify">
+    <span class="text">{{ api['description'] }}</span>
+  </div>
+  <div class="col-lg-2 text-right">
+    <a class="nav-link" href="#">
+      <span class="icon text-black-50">
+        <i class="fas fa-fw fa-download"></i>
+        YAML
+      </span>
+    </a>
+  </div>  
+</div>
+
+<hr/>
+
+<div class="row">
+  <div class="col-lg-12">
+    <div class="card shadow mb-4">
+      <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Paramêtros</h6>
+      </div>
+      <div class="card-body">
+
+        <table class="table table-bordered dataTable">
+          <thead>
+            <tr role="row">
+              <th>Nome</th>
+              <th>Descrição</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for param in api['path-params'] %}
+            <tr role="row" class="even">
+              <td>
+                <div>
+                  <span class="font-weight-bold">{{ param['name'] }}</span><span class="small font-weight-bold text-danger">{% if param['required'] == True %} * Obrigatório{% endif %}</span>
+                </div>
+                <div>
+                  <span class="font-weight-bold small">{{ param['type'] }}</span>
+                </div>
+                <div>
+                  <span class="text-gray-600 small">(path)</span>
+                </div>              
+              </td>
+              <td><span class="small">{{ param['description'] }}</span></td>
+            </tr>
+            {% endfor %}
+
+            {% if api['body-params'] != None %}
+            <tr role="row" class="even">
+              <td rowspan="2">
+                <div>
+                  <span class="font-weight-bold">{{ api['body-params']['name'] }}</span><span class="small font-weight-bold text-danger">{% if api['body-params']['required'] == True %} * Obrigatório{% endif %}</span>
+                </div>
+                <div>
+                  <span class="text-gray-600 small">(body)</span>
+                </div>
+              </td>
+              <td><span class="small">{{ api['body-params']['description'] }}</span></td>
+            </tr>
+            <tr role="row" class="even">
+              <td>
+                <div class="font-weight-bold small p-1">Exemplo:</div>
+                <div>
+                  <pre class="bg-gray-900 text-gray-100 p-2 m-1" id="body_example_json">{{ json.dumps(api['body-params']['example'], indent=4) }}</pre>
+                </div>
+              </td>
+            </tr>
+            <tr role="row" class="even">
+              <td colspan="2" class="small p-1 text-right"><span class="font-weight-bold">Content-Type: </span>{{ api['body-params']['content-type'] }}</td>
+            </tr>
+            {% endif %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-lg-12">
+
+    {% if api['responses'] != None %}
+
+    <!-- Basic Card Example -->
+    <div class="card shadow mb-4">
+      <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Response</h6>
+      </div>
+      <div class="card-body">
+
+        <table class="table table-bordered dataTable">
+          <thead>
+            <tr role="row">
+              <th>Código</th>
+              <th>Descrição</th>
+            </tr>
+          </thead>
+          <tbody>        
+            {% for response in api['responses']["response"] %}
+            <tr role="row" class="even">
+              <td>
+                <span class="font-weight-bold small">{{ response['code'] }}</span>
+              </td>
+              <td>
+                <div class="small p-2 m-1 bg-gray-900 text-gray-100">{{ response['description'] }}</div>
+                <div class="font-weight-bold small p-1">Exemplo:</div>
+                <div>
+                  <pre class="bg-gray-900 text-gray-100 p-2 m-1" id="body_example_json">{{ json.dumps(response['example'], indent=4) }}</pre>
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+            <tr role="row" class="even">
+              <td colspan="2" class="small p-1 text-right"><span class="font-weight-bold">Content-Type: </span>{{ api['responses']["content-type"] }}</td>
+            </tr>          
+          </tbody>
+        </table>      
+
+      </div>
+    </div>
+
+    {% endif %}
+
+  </div>
+</div>
+
+{% endif %}
+
+{% endblock %}

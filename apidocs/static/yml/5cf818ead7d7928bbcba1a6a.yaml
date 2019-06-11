@@ -1,0 +1,158 @@
+swagger: '2.0'
+info:
+  description: APIs protocolos de atendimento
+  version: 1.0.0
+  title: APIs - Attendencies Start
+  termsOfService: 'http://www.nextel.com.br/terms/'
+  contact:
+    email: IT_Arquitetura@nextel.com.br
+host: ms-apis-uat.nextel.com.br
+tags:
+  - name: Attendance Zendesk
+    description: ''
+  - name: Start Attendance
+    description: ''
+schemes:
+  - https
+paths:
+  /attendancies_register/V1/{documentNumber}/{startDate}/{endDate}/{protocolNumber}:
+    get:
+      tags:
+        - Start Attendance
+      summary: Consulta a lista de registro de atendimento do client
+      description: ''
+      produces:
+        - application/json
+      parameters:
+        - name: documentNumber
+          in: path
+          description: Número do documento
+          required: true
+          type: string
+        - name: startDate
+          in: path
+          description: Data de início da busca
+          required: true
+          type: string
+          format: 'DD-MM-YYYY'
+        - name: endDate
+          in: path
+          description: Data de fim da busca
+          required: true
+          type: string
+          format: 'DD-MM-YYYY'
+        - name: protocolNumber
+          in: path
+          description: Número do protocolo
+          required: true
+          type: integer
+      responses:
+        '200':
+          description: Sucesso
+          schema:
+            $ref: '#/definitions/AttendanceList'
+        '401':
+          description: Não autorizado
+          schema:
+            $ref: '#/definitions/Unauthorized'
+        '450':
+          description: Dados não encontrados
+          schema:
+            $ref: '#/definitions/Error'
+        '550':
+          description: Erro desconhecido no provedor
+          schema:
+            $ref: '#/definitions/Error'
+  
+securityDefinitions:
+  attendencies_start:
+    type: oauth2
+    tokenUrl: 'https://ms-apis-uat.nextel.com.br/attendencies_start/V1/oauth2/token'
+    flow: application
+    scopes: {}
+  open_attendance_register:
+    type: oauth2
+    tokenUrl: 'https://ms-apis-uat.nextel.com.br/open_attendance_register/V1/oauth2/token'
+    flow: application
+    scopes: {}
+  close_attendance_register:
+    type: oauth2
+    tokenUrl: 'https://ms-apis-uat.nextel.com.br/close_attendance_register/V1/oauth2/token'
+    flow: application
+    scopes: {}
+  consult_attendance:
+    type: oauth2
+    tokenUrl: 'https://ms-apis-uat.nextel.com.br/consult_attendance/V1/oauth2/token'
+    flow: application
+    scopes: {}
+definitions:
+
+  AttendanceList:
+    type: object
+    properties:
+      registerAttendance:
+        type: array
+        items:
+          $ref: '#/definitions/AttendanceListItems'
+          
+  AttendanceListItems:
+    type: object
+    properties:
+      protocolNumber:
+        type: integer
+      number:
+        type: integer
+      date:
+        type: string
+      reason:
+        $ref: '#/definitions/AttendanceReason'
+      channel:
+        type: string
+      product:
+        type: string
+      status:
+        type: string
+        
+  AttendanceReason:
+    type: object
+    properties:
+      code:
+        type: integer
+      classification:
+        type: string
+      subject:
+        type: string
+      desc:
+        type: string
+      detail:
+        type: string
+  Error:
+    type: object
+    properties:
+      message:
+        type: string
+      detail:
+        type: string
+      providerDetail:
+        $ref: '#/definitions/ProviderDetail'
+  ProviderDetail:
+    type: object
+    properties:
+      name:
+        type: string
+      code:
+        type: string
+      message:
+        type: string
+  Unauthorized:
+    type: object
+    properties:
+      error_description:
+        type: string
+        example: The access token is invalid or has expired
+      error:
+        type: string
+        example: invalid_token
+externalDocs:
+  description: Find out more about Swagger
+  url: 'http://swagger.io'

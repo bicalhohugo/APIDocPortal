@@ -1,0 +1,70 @@
+{% extends 'base/template.html' %}
+
+{% block header %}
+    {% block title %}TS Online - API - Preview{% endblock %}
+{% endblock %}
+
+{% block button_back %}
+
+<button type="submit" form="apis" class="d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+    <i class="fas fa-plus fa-sm text-white-50"></i> Importar APIs
+</button>
+
+{% endblock %}
+
+{% block content %}
+
+{% if apis == None %}
+    <div class="card mb-4 py-3 border-left-warning text-center">Sem registros de APIs para serem exibidos, no momento!</div>
+{% else %}
+<div class="row">
+	<div class="col-lg-12">
+        <form id="apis" name="apis" method="post" action="{{ url_for('tsonline_controller.tsonline_apis_save') }}" class="user" enctype="multipart/form-data">
+            {% if apis['apis_to_insert'] %}
+            <span class="font-weight-bold">INCLUSÃO:</span> As APIs abaixo serão incluidas em nossa base com os seguintes dados coletados do arquivo YAML informado.
+            {% endif %}
+            {% for api in apis['apis_to_insert'] %}
+
+            <div class="card mb-2 mt-2 {{ css_div_class(api['method']) }}">
+                <a class="nav-link" href="#">
+                    <div class="btn {{ css_button_class(api['method']) }} btn-sm">
+                        <span class="text">{{ api['method'] }}</span>
+                    </div>
+                    <span class="font-weight-bolder text-black-50 m-1">{{ api['path'] }}</span>
+                    <span class="text-black-50 m-1">{{ api['summary'] }}</span>
+                    <span class="icon text-black-50">
+                        <i class="fas fa-fw fa-angle-right"></i>
+                    </span>				
+                </a>
+            </div>
+
+            {% endfor %}
+
+            {% if apis['apis_to_update'] %}
+            <span class="font-weight-bold">ATUALIZAÇÃO:</span> As APIs abaixo serão atualizadas em nossa base com os seguintes dados coletados do arquivo YAML informado.
+            {% endif %}
+            {% for api in apis['apis_to_update'] %}
+
+            <div class="card mb-2 mt-2 {{ css_div_class(api['method']) }}">
+                <a class="nav-link" href="#">
+                    <div class="btn {{ css_button_class(api['method']) }} btn-sm">
+                        <span class="text">{{ api['method'] }}</span>
+                    </div>
+                    <span class="font-weight-bolder text-black-50 m-1">{{ api['path'] }}</span>
+                    <span class="text-black-50 m-1">{{ api['summary'] }}</span>
+                    <span class="icon text-black-50">
+                        <i class="fas fa-fw fa-angle-right"></i>
+                    </span>				
+                </a>
+            </div>    
+
+            {% endfor %}
+
+        </form>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block script %}
+{% endblock %}

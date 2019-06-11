@@ -1,0 +1,52 @@
+{% extends 'base/template.html' %}
+
+{% block header %}
+  {% block title %}Configurações e Propriedades{% endblock %}
+{% endblock %}
+
+{% block content %}
+
+<div class="row">
+	<div class="col-lg-12">
+        <form id="configurationproperties" name="configurationproperties" method="post" action="{{ url_for('configuration_controller.save_configuration_changes') }}" class="user">
+            <h2 class="h4">Database</h2>
+            <hr/>
+            <div class="form-group row">
+                <label for="database_host" class="col-sm-2 col-form-label">Host</label>
+                <div class="col-sm-10">
+                    <input type="text" readonly class="form-control" id="database_host" name="database_host" value="{{ config['database']['host'] }}">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="database_port" class="col-sm-2 col-form-label">Porta</label>
+                <div class="col-sm-10">
+                    <input type="text" readonly class="form-control" id="database_port" name="database_port" value="{{ config['database']['port'] }}">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="database_db" class="col-sm-2 col-form-label">Database</label>
+                <div class="col-sm-10">
+                    <input type="text" readonly class="form-control" id="database_db" name="database_db" value="{{ config['database']['db'] }}">
+                </div>
+            </div>            
+            <hr />
+            <h2 class="h4">Paginação</h2>
+            <hr/>
+            <div class="form-group row">
+                <label for="pagination_max_per_page" class="col-sm-2 col-form-label">Qtd. por página</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="pagination_max_per_page" name="pagination_max_per_page" value="{{ config['pagination']['max_per_page'] }}">
+                </div>
+            </div>
+            <hr />
+            <div class="form-group row">
+                <button type="submit" form="configurationproperties" class="btn btn-primary">
+                    Salvar Alterações
+                </button>
+            </div>  
+        </form>    
+	</div>
+</div>
+
+
+{% endblock %}

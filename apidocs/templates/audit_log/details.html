@@ -1,0 +1,40 @@
+{% extends 'base/template.html' %}
+
+{% block header %}
+  {% block title %}Atividade (Logs){% endblock %}
+{% endblock %}
+
+{% block content %}
+
+<div class="row">
+	<div class="col-lg-12">
+        {% if logs.count() > 0 %}
+        <div class="table-responsive">
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Data</th>
+                        <th>Máquina de Origem</th>
+                        <th>Tipo do Evento</th>
+                        <th>Evento</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for log in logs %}
+                    <tr>
+                        <td>{{ log['event_date'] }}</td>
+                        <td>{{ log['ip'] }}</td>
+                        <td>{{ log['audit_event']['type'] }}</td>
+                        <td>{{ log['audit_event']['event'] }}</td>        
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="card mb-4 py-3 border-left-warning text-center">Sem registros de auditoria para serem exibidos, no momento!</div>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}

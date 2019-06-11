@@ -1,0 +1,217 @@
+{% extends 'base/template.html' %}
+
+{% block header %}
+  {% block title %}Home{% endblock %}
+{% endblock %}
+
+{% block button_back %}
+
+<a href="{{ url_for('register_controller.new_user_register') }}" class="btn btn-primary btn-icon-split btn-sm">
+  <span class="icon text-white-50">
+    <i class="fas fa-fw fa-user"></i>
+  </span>
+  <span class="text">Criar novo usuário</span>
+</a>
+
+{% endblock %}
+
+{% block content %}
+
+<div class="row">
+
+  <!-- Earnings (Monthly) Card Example -->
+  <div class="col-xl-3 col-md-6 mb-4">
+    <div class="card border-left-primary shadow h-100 py-2">
+      <div class="card-body">
+        <div class="row no-gutters align-items-center">
+          <div class="col mr-2">
+            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">APIs</div>
+            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ apisCount }}</div>
+          </div>
+          <div class="col-auto">
+            <i class="fas fa-torii-gate fa-2x text-gray-300"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% if g.user["profile"] == "A" or g.user["profile"] == "E" %}
+
+  <!-- Earnings (Monthly) Card Example -->
+  <div class="col-xl-3 col-md-6 mb-4">
+    <div class="card border-left-success shadow h-100 py-2">
+      <div class="card-body">
+        <div class="row no-gutters align-items-center">
+          <div class="col mr-2">
+            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Orquestradores</div>
+            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ orchsCount }}</div>
+          </div>
+          <div class="col-auto">
+            <i class="fas fa-sitemap fa-2x text-gray-300"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Earnings (Monthly) Card Example -->
+  <div class="col-xl-3 col-md-6 mb-4">
+    <div class="card border-left-info shadow h-100 py-2">
+      <div class="card-body">
+        <div class="row no-gutters align-items-center">
+          <div class="col mr-2">
+            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Serviços</div>
+            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ servicesCount }}</div>
+          </div>
+          <div class="col-auto">
+            <i class="fas fa-server fa-2x text-gray-300"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pending Requests Card Example -->
+  <div class="col-xl-3 col-md-6 mb-4">
+    <div class="card border-left-warning shadow h-100 py-2">
+      <div class="card-body">
+        <div class="row no-gutters align-items-center">
+          <div class="col mr-2">
+            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Filas</div>
+            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ queues_count }}</div>
+          </div>
+          <div class="col-auto">
+            <i class="fas fa-exchange-alt fa-2x text-gray-300"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% else %}
+
+  <div class="col-xl-3 col-md-6 mb-4">
+    <div class="card border-left-success shadow h-100 py-2">
+      <div class="card-body">
+        <div class="row no-gutters align-items-center">
+          <div class="col mr-2">
+            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Usuários Ativos</div>
+            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ users_count }}</div>
+          </div>
+          <div class="col-auto">
+            <i class="fas fa-users fa-2x text-gray-300"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% endif %}
+
+</div>
+
+<div class="row">
+
+  <div class="col-lg-6">
+
+    <!-- Default Card Example -->
+    <div class="card shadow mb-4">
+      <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">APIs</h6>
+      </div>
+      <div class="card-body">
+        <div class="mb-2">
+          Permite pesquisar e visualizar os dados de uma API.
+        </div>
+        <div class="mb-2">
+          <a href="{{ url_for('api_controller.api_list') }}" class="btn btn-primary btn-icon-split btn-sm">
+            <span class="icon text-white-50">
+              <i class="fas fa-fw fa-torii-gate"></i>
+            </span>
+            <span class="text">Acessar APIs</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    {% if g.user["profile"] == "A" or g.user["profile"] == "E" %}
+
+    <!-- Basic Card Example -->
+    <div class="card shadow mb-4">
+      <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Orquestradores</h6>
+      </div>
+      <div class="card-body">
+        <div class="mb-2">
+          Permite pesquisar e visualizar os dados de um Orquestrador.
+        </div>
+        <div class="mb-2">
+          <a href="{{ url_for('orch_controller.orch_list') }}" class="btn btn-primary btn-icon-split btn-sm">
+            <span class="icon text-white-50">
+              <i class="fas fa-fw fa-sitemap"></i>
+            </span>
+            <span class="text">Acessar Orquestradores</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    {% endif %}
+
+  </div>
+
+  <div class="col-lg-6">
+
+    {% if g.user["profile"] == "A" or g.user["profile"] == "E" %}
+
+    <div class="card shadow mb-4">
+      <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Serviços</h6>
+      </div>
+      <div class="card-body">
+        <div class="mb-2">
+          Permite pesquisar e visualizar os dados de um Serviço.
+        </div>
+        <div class="mb-2">
+          <a href="{{ url_for('service_controller.service_list') }}" class="btn btn-primary btn-icon-split btn-sm">
+            <span class="icon text-white-50">
+              <i class="fas fa-fw fa-server"></i>
+            </span>
+            <span class="text">Acessar Serviços</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="card shadow mb-4">
+      <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Filas</h6>
+      </div>
+      <div class="card-body">
+        <div class="mb-2">
+          Permite pesquisar e visualizar os dados de um Serviço do tipo Fila.
+        </div>
+        <div class="mb-2">
+          <a href="{{ url_for('service_controller.rmq_service_list') }}" class="btn btn-primary btn-icon-split btn-sm">
+            <span class="icon text-white-50">
+              <i class="fas fa-fw fa-exchange-alt"></i>
+            </span>
+            <span class="text">Acessar Filas</span>
+          </a>
+        </div>
+      </div>
+    </div>    
+
+    {% endif %}
+  </div>
+
+</div>
+
+{% endblock %}
+
+{% block script %}
+    <script type="text/javascript">
+        $('#infoModal').modal('show');
+    </script>
+{% endblock %}

@@ -1,0 +1,1 @@
+#TODO: Implementar os methodos do http_methods que estão no api_controller

@@ -1,0 +1,194 @@
+swagger: '2.0'
+info:
+  description: APIs para operacoes referente a clientes
+  version: 1.0.0
+  title: APIs - Customers
+  termsOfService: 'http://www.nextel.com.br/terms/'
+  contact:
+    email: IT_Arquitetura@nextel.com.br
+host: ms-apis-uat.nextel.com.br
+tags:
+  - name: Hierarchy
+    description: Hierarquia de um cliente
+schemes:
+  - https
+paths:
+    
+  '/customer/hierarchy/V1/ccId/{ccId}':
+    get:
+      tags:
+        - Hierarchy
+      summary: Consulta a hierarquia de uma flat/large account com informações básicas dos contratos.
+      description: 'Esta API e utilizada para exposicao dos seguintes servicos: 
+      
+      1) get-customer-hierarchy'
+      produces:
+        - application/json
+      parameters:
+        - name: ccId
+          in: path
+          description: Código do cliente
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Sucesso
+          schema:
+            $ref: '#/definitions/HierarchyRequest'
+        '400':
+          description: Requisição inválida
+          schema:
+            $ref: '#/definitions/Error'
+        '450':
+          description: Dados nao encontrados
+          schema:
+            $ref: '#/definitions/Error'
+        '451':
+          description: Pre-condicao invalida
+          schema:
+            $ref: '#/definitions/Error'
+        '550':
+          description: Erro desconhecido no provedor
+          schema:
+            $ref: '#/definitions/Error'
+      security:
+        - customer_hierarchy_V1: []
+ 
+
+securityDefinitions:
+
+  customer_hierarchy_V1:
+    type: oauth2
+    tokenUrl: 'https://ms-apis-uat.nextel.com.br/customer/hierarchy/V1/oauth2/token'
+    flow: application
+    scopes: {}
+
+definitions:
+
+  HierarchyRequest:
+    type: object
+    properties:
+      customer:
+          $ref: '#/definitions/CustomerInformation'
+      hierarchy:
+        type: array
+        items:
+          $ref: '#/definitions/HierarchyInformation'
+    
+  CustomerInformation:
+    type: object
+    properties:
+      document:
+        type: string
+        description: CPF/CNJP do cliente
+        
+  HierarchyInformation:
+    type: object
+    properties:
+      customer:
+          $ref: '#/definitions/HierarchyInformationCustomer'       
+      contracts:
+        type: array
+        items:
+          $ref: '#/definitions/HierarchyInformationContracts'
+          
+  HierarchyInformationContracts:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int64
+      msisdn:
+        type: string
+      rateplan:
+        $ref: '#/definitions/HierarchyInformationContractsRatePlan'
+      activation:
+        $ref: '#/definitions/HierarchyInformationContractsActivation'
+      status:
+        $ref: '#/definitions/HierarchyInformationContractsStatus'
+
+  HierarchyInformationContractsStatus:
+    type: object
+    properties:
+      current:
+        type: string
+      pending:
+        type: string
+      date:
+        type: string
+        format: date-time
+  
+  HierarchyInformationContractsActivation:
+    type: object
+    properties:
+      date:
+        type: string
+        format: date-time
+        
+  
+  HierarchyInformationContractsRatePlan:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+      name: 
+        type: string
+
+  HierarchyInformationCustomer:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+      parent:
+          $ref: '#/definitions/HierarchyInformationCustomerParent' 
+      ccId:
+        type: string
+      level: 
+        $ref: '#/definitions/HierarchyInformationCustomerLevel' 
+      paymentResponsibleFlag:
+        type: boolean
+      contractResponsibleFlag:
+        type: boolean
+  
+  HierarchyInformationCustomerLevel:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+      code: 
+        type: integer
+        format: int32
+      
+  
+  HierarchyInformationCustomerParent:
+    type: object
+    properties:
+      id:
+        type: string
+        format: int32
+
+  Error:
+    type: object
+    properties:
+      message:
+        type: string
+      detail:
+        type: string
+      providerDetail:
+        $ref: '#/definitions/ProviderDetail'
+  ProviderDetail:
+    type: object
+    properties:
+      name:
+        type: string
+      code:
+        type: string
+      message:
+        type: string
+
+externalDocs:
+  description: Find out more about Swagger
+  url: 'http://swagger.io'

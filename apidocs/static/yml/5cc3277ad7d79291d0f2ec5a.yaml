@@ -1,0 +1,445 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Inclusao Nota Fiscal
+servers:
+  - url: 'https://ms-apis-uat.nextel.com.br'
+    description: Ambiente de UAT
+  - url: 'https://ms-apis.nextel.com.br'
+    description: Ambiente de Produção
+paths:
+  /notas-fiscais/v1:
+    post:
+      operationId: inclusao-de-nota-fiscal
+      summary: inclusão de nota fiscal
+      tags:
+        - Inclusao Nota Fiscal
+      requestBody:
+        description: informações para inclusão da nota fiscal
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Requisicao'
+      responses:
+        '200':
+          description: codigo processamento
+          headers:
+            X-Request-Id:
+              $ref: '#/components/headers/X-Request-Id'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Resposta'
+        '450':
+          $ref: '#/components/responses/NotFound'
+        '550':
+          $ref: '#/components/responses/UnknownError'
+        default:
+          $ref: '#/components/responses/DefaultError'
+components:
+  schemas:
+    Resposta:
+      type: object
+      properties:
+        identificadorSolicitacao:
+          description: Número de identificação da solicitação
+          type: string
+          example: '123'
+        identificadorNotaFiscal:
+          description: Código único de identificação da nota fiscal
+          type: string
+          example: '13'
+    Requisicao:
+      type: object
+      description: dados da requisição do metodo
+      properties:
+        aprovado:
+          description: indicador de aprovação
+          type: boolean
+          example: fase
+        notaFiscal:
+          $ref: '#/components/schemas/NotaFiscal'
+    NotaFiscal:
+      type: object
+      description: Dados da requisicao
+      properties:
+        cabecalho:
+          $ref: '#/components/schemas/CabecalhoNotaFiscal'
+        fornecedor:
+          $ref: '#/components/schemas/Fornecedor'
+        transporte:
+          $ref: '#/components/schemas/Transporte'
+        imposto:
+          $ref: '#/components/schemas/ImpostosCabecalho'
+        ufOrigem:
+          $ref: '#/components/schemas/CodigoSigla'
+        ufDestino:
+          $ref: '#/components/schemas/CodigoSigla'
+        itens:
+          $ref: '#/components/schemas/ItensNotaFiscal'
+    CabecalhoNotaFiscal:
+      type: object
+      description: Conhecimento de Transporte Eletrônico
+      properties:
+        numero:
+          description: número da nota fiscal
+          type: string
+          example: '12311'
+        serie:
+          description: serie da nota fiscal
+          type: string
+          example: SEM SERIE
+        valor:
+          description: serie da nota fiscal
+          type: number
+          example: 123.12
+        dataEmissao:
+          description: data da emissão da nota fiscal - formato aaa-mm-dd
+          type: string
+          example: '2019-01-20'
+        tipo:
+          $ref: '#/components/schemas/CodigoSigla'
+        descricao:
+          description: Discriminação do Serviço
+          type: string
+          example: Discriminação do Serviço
+        dataVencimento:
+          description: data do vencimento da nota fiscal - formato aaaa-mm-dd
+          type: string
+          example: '2019-02-21'
+        pesoTotalMercadoria:
+          description: peso total da mercadoria
+          type: number
+          example: 123.12
+        valorBruto:
+          description: valor bruto da nota fiscal
+          type: number
+          example: 123.12
+        informacaoComplementar:
+          description: informação complementar da nota fiscal
+          type: string
+          example: informação complementar da nota fiscal
+        identificadorEletronico:
+          description: identificador eletrônico da nota fiscal
+          type: string
+          example: 12312213AAAAA
+        municipio:
+          $ref: '#/components/schemas/CodigoSigla'
+        acesso:
+          $ref: '#/components/schemas/Acesso'
+        taxaConversao:
+          description: Taxa de conversão utilizada quando a moeda da OC for estrangeira
+          type: number
+          example: 123.12
+        unidadeMoeda:
+          description: Unidade da moeda utilizada na OC
+          type: string
+          example: dolar
+        condicaoPagamento:
+          $ref: '#/components/schemas/CodigoDescricao'
+        cnpjEstabelecimentoRecebedor:
+          description: cnpj do estabelecimento Nextel que recebeu o pedido
+          type: string
+          example: '123123123000111'
+    Fornecedor:
+      type: object
+      properties:
+        tipoDocumento:
+          description: Representa tipo de documento informado
+          type: string
+          example: RG
+        numeroDocumento:
+          description: Representa numero do documento
+          type: string
+          example: '1234567890'
+        inscricaoEstadual:
+          description: Representa Inscrição Estadual
+          type: string
+          example: '110042490114'
+    Acesso:
+      type: object
+      description: Conhecimento de Transporte Eletrônico
+      properties:
+        chaveAcesso:
+          description: Representa chave de acesso para CTe
+          type: string
+          example: 123ABC
+        codigo:
+          description: Representa codigo de identificação do registro para CTe
+          type: string
+          example: 123ABC
+        tipo:
+          description: Representa tipo de identificador do registro para CTe
+          type: string
+          example: 123ABC
+    Transporte:
+      type: object
+      properties:
+        valorSeguro:
+          description: RepresentaValor do Seguro de Transporte
+          type: number
+          example: 123.45
+        valorFrete:
+          description: Representa Valor do Frete de Transporte
+          type: number
+          example: 123.45
+        valorDesconto:
+          description: Representa Valor do Desconto de Transporte
+          type: number
+          example: 123.45
+    ImpostosCabecalho:
+      type: object
+      properties:
+        icms:
+          $ref: '#/components/schemas/ICMS'
+        icmsSt:
+          $ref: '#/components/schemas/ICMSSubstituicaoTributaria'
+        inss:
+          $ref: '#/components/schemas/INSS'
+        outrosImpostos:
+          $ref: '#/components/schemas/ImpostosOutros'
+    ImpostosItem:
+      type: object
+      properties:
+        icms:
+          $ref: '#/components/schemas/ICMS'
+        icmsSt:
+          $ref: '#/components/schemas/ICMSSubstituicaoTributaria'
+        iss:
+          $ref: '#/components/schemas/ISS'
+        outrosImpostos:
+          $ref: '#/components/schemas/ImpostosOutros'
+    ImpostosOutros:
+      type: object
+      properties:
+        cofins:
+          description: >-
+            Representa valor de COFINS - Contribuição para Financiamento da
+            Seguridade Social
+          type: number
+          example: 123.12
+        ipi:
+          description: Representa valor de IPI - Imposto sobre Produtos Industrializados
+          type: number
+          example: 123.12
+        pis:
+          description: Representa valor de PIS - Programas de Integração Social
+          type: number
+          example: 123.12
+    ICMSSubstituicaoTributaria:
+      type: object
+      properties:
+        valorBase:
+          description: valor base para calculo do imposto a ser substituido
+          type: number
+          example: 123.12
+        valor:
+          description: valor do imposto a ser substituido
+          type: number
+          example: 123.12
+        valorRecuperar:
+          description: valor a recuperar do imposto a ser substituido
+          type: number
+          example: 123.12
+        valorBaseSubstituido:
+          description: valor base substituido
+          type: number
+          example: 123.12
+        valorSubstituido:
+          description: valor do imposto a ser substituido
+          type: number
+          example: 123.12
+    INSS:
+      allOf:
+        - $ref: '#/components/schemas/BaseAliquotaValor'
+        - type: object
+    ISS:
+      allOf:
+        - $ref: '#/components/schemas/BaseAliquotaValor'
+        - type: object
+    IR:
+      allOf:
+        - $ref: '#/components/schemas/BaseAliquotaValor'
+        - type: object
+          properties:
+            tipo:
+              description: tipo de contribuinte
+              type: string
+              example: tipo
+            categoria:
+              description: categoria
+              type: string
+              example: categoria
+    ICMS:
+      allOf:
+        - $ref: '#/components/schemas/BaseAliquotaValor'
+        - type: object
+          properties:
+            tipo:
+              description: Representa tipo de ICMS
+              type: string
+              example: rural
+            aliquotaDiferencial:
+              description: Representa aliquota diferencial do imposto
+              type: number
+              example: 123.12
+            valorDiferencial:
+              description: Representa valor diferencial do imposto
+              type: number
+              example: 123.12
+    CodigoSigla:
+      type: object
+      description: identificador e codigo
+      properties:
+        codigo:
+          description: codigo da entidade
+          type: string
+          example: '123'
+        sigla:
+          description: sigla da entidade
+          type: string
+          example: CODENT
+    CodigoDescricao:
+      type: object
+      description: Codigo e descricao
+      properties:
+        codigo:
+          description: codigo da entidade
+          type: string
+          example: 123ABC
+        descricao:
+          description: descricao da entidade
+          type: string
+          example: descricao da entidade
+    BaseAliquotaValor:
+      properties:
+        valorBase:
+          description: valor base para calculo do imposto
+          type: number
+          example: 123.12
+        aliquota:
+          description: aliquota do imposto
+          type: number
+          example: 123.12
+        valor:
+          description: valor do imposto
+          type: number
+          example: 123.12
+    ItensNotaFiscal:
+      type: array
+      items:
+        $ref: '#/components/schemas/ItemNotaFiscal'
+    ItemNotaFiscal:
+      allOf:
+        - $ref: '#/components/schemas/Item'
+        - type: object
+      properties:
+        pedidoCompras:
+          $ref: '#/components/schemas/PedidoCompras'
+        imposto:
+          $ref: '#/components/schemas/ImpostosItem'
+    Item:
+      properties:
+        cfop:
+          description: Código Fiscal de Operações e de Prestações
+          type: integer
+          example: '12345'
+        unidadeMedida:
+          description: Unidade de Medida
+          type: string
+          example: quilo
+        quantidade:
+          description: quantidade do item
+          type: number
+          example: 123.45
+        valorUnitario:
+          description: valor unitario do item
+          type: number
+          example: 123.45
+        valorTotal:
+          description: valor total do item
+          type: number
+          example: 123.45
+        valorLiquido:
+          description: valor liquido do item
+          type: number
+          example: 123.45
+        naturezaOperacao:
+          description: natureza da operação do item
+          type: string
+          example: natureza da operação
+        descricao:
+          description: descrição do item
+          type: string
+          example: descrição
+    PedidoCompras:
+      type: object
+      description: Pedidode compras
+      properties:
+        numero:
+          description: número do pedido
+          type: string
+          example: 123ABC
+        item:
+          $ref: '#/components/schemas/PedidoComprasItem'
+    PedidoComprasItem:
+      type: object
+      description: Pedido de compras por item
+      properties:
+        numeroLinha:
+          description: número da linha
+          type: integer
+          example: 10
+        numeroEntrega:
+          description: número da entrega
+          type: integer
+          example: 20
+    Erro:
+      type: object
+      properties:
+        mensagem:
+          type: string
+        detalhe:
+          type: string
+  headers:
+    X-Request-Id:
+      description: Identificador único da requisição
+      schema:
+        type: string
+  responses:
+    NotFound:
+      description: Dados nao encontrados
+      headers:
+        X-Request-Id:
+          $ref: '#/components/headers/X-Request-Id'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Erro'
+    UnknownError:
+      description: Erro desconhecido no provedor
+      headers:
+        X-Request-Id:
+          $ref: '#/components/headers/X-Request-Id'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Erro'
+    DefaultError:
+      description: Erro desconhecido
+      headers:
+        X-Request-Id:
+          $ref: '#/components/headers/X-Request-Id'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Erro'
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      description: Gera um token
+      flows:
+        clientCredentials:
+          tokenUrl: /autenticacao/v1/oauth2/token
+          scopes: {}
