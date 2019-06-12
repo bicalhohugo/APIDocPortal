@@ -11,15 +11,20 @@ bp = Blueprint('db', __name__)
 class MongoDb:
     def __init__(self, col_name):
         config = get_configurations()
+        db_mongo_prefix = config["database"]["mongo_prefix"]
         db_host = config["database"]["host"]
         db_port = config["database"]["port"]
         db_name = config["database"]["db"]
+
         self.page_size = config["pagination"]["max_per_page"]
         self.page_num = 1
         self.no_pagination = False
 
-        #self.client = MongoClient("mongodb://{}".format(db_host), port=db_port)
-        self.client = MongoClient("mongodb+srv://{}".format(db_host))
+        if db_port and db_port != "":
+            self.client = MongoClient("{}://{}".format(db_mongo_prefix, db_host), port=db_port)
+        else:
+            self.client = MongoClient("{}://{}".format(db_mongo_prefix, db_host))
+
         self.collection = self.client[db_name][col_name]
 
     def __enter__(self):
