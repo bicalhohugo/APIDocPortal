@@ -1,0 +1,23 @@
+version: '3'
+
+services:
+    apidocs:
+        image: apidocs:latest
+        ports:
+            - "5000:8080"
+        deploy:
+          restart_policy:
+            condition: on-failure
+        depends_on:
+            - mongo
+
+    mongo:
+        image: mongo:latest
+        deploy:
+            restart_policy:
+                condition: always
+        volumes:
+            ['/mongodb:/data/db']
+        ports:
+            - "27017:27017"
+

@@ -56,5 +56,5 @@ def create_app(test_config=None):
 
     from apidocs.modules.user import controllers
     app.register_blueprint(controllers.bp)
-
+    
     return app
