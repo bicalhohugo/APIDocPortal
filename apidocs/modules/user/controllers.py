@@ -50,6 +50,17 @@ def register_new_user(firstname, lastname, email, password):
     
     return True
 
+def register_new_admin(firstname, lastname, email, password):
+    if (get_user(email)):
+        return False
+
+    model = UserModel(firstname + ' ' + lastname, email, password, 'A', 'A')
+    user = model.get_model()
+    
+    insert_user(user)
+    
+    return True
+
 def insert_user(user):
     result = db_users.insert(user)
     

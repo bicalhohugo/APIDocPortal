@@ -17,7 +17,6 @@ services:
             restart_policy:
                 condition: always
         volumes:
-            ['/mongodb:/data/db']
+            - /mongodb:/data/db
         ports:
             - "27017:27017"
-

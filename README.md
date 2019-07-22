@@ -1,4 +1,5 @@
 # APIDocPortal
+
 Portal de Documentações de Serviços e APIs
 
 # Rodando local
@@ -19,20 +20,20 @@ Portal de Documentações de Serviços e APIs
 
 7) Rode o comando: sh startup.sh e sua app será iniciada na porta 8080 no localhost
 
-8) Não menos importante, configure o seu mongodb local ou na nuvem (atlas)
+8) Não menos importante, configure o seu mongodb local ou na nuvem (atlas) através do arquivo config/properties.config
 
-9) Acesse sua APP e rode os comandos abaixo, a partir do 3, pra criar seu usuário padrão
+9) Execute os passos 4, 5 e 6 descritos abaixo para acessar o site
 
 # Rodando no Docker
 
-1) Rode o comando docker-compose up --build -d
+1) Instale o Docker e o docker-compose no seu ambiente
 
-2) Acesse "localhost:5000" e o site estará no ar
+2) Build a imagem com o comando: docker build -t apidocs:latest .
 
-3) Crie um usuário no mongodb através da conexão ao banco "mongo:27017" do docker
+3) Rode o comando docker-compose up --build -d
 
-4.1) Exemplo de uma criação após conectar no container: 
+4) Acesse "localhost:5000" e o site estará no ar e conectado ao mongodb
 
-4.2) mongo > use apidocs > db.users.insert({ 'name' : 'Admin', 'email' : 'admin@apidocs.com.br', 'password' : '123456', 'status' : 'A', 'profile' : 'A' })
+5) Crie um usuário admin padrão acessando a rota "locahost:5000/configuration/seed"
 
-5) Retorne ao site e digite: admin@apidocs.com.br com senha 123456
+6) Retorne ao site e digite: admin@apidocs.com.br com senha: admin

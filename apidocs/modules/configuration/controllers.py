@@ -4,6 +4,7 @@ from flask import (
 from apidocs.modules.access_control.manager import login_required, admin_required
 from apidocs.config.configuration import Configuration
 from apidocs.modules.configuration.models import ConfigurationModel
+from apidocs.modules.user.controllers import register_new_admin
 
 bp = Blueprint('configuration_controller', __name__)
 
@@ -43,7 +44,26 @@ def save_configurations():
         flash(error, 'error')
         return False
 
+def seed():
+    try:
+        #Cria usuário admin
+        register_new_admin('Admin', 'API Docs', 'admin@apidocs.com.br', 'admin')
+
+        #Cria os métodos http
+
+        return True, ""
+    except Exception as e:
+        return False, e
+
 ### ROUTES ###
+
+@bp.route("/configuration/seed")
+def configuration_seed():
+    seed_result, seed_error = seed()
+    if seed_result:
+        return "Todos os dados foram adicionados no DB"
+    else:
+        return f"Ocorreu um erro ao adicionar as informações ao DB: {seed_error}"
 
 @bp.route("/configuration/properties")
 @login_required
