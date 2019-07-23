@@ -1,17 +1,16 @@
-FROM python
+FROM python:3.6.9-alpine
 
-RUN apt-get update -y && \  
-    apt-get install -y python3-pip python3-dev
+RUN apk add --no-cache bash
 
 COPY ./requirements.txt /requirements.txt
 
 WORKDIR /
 
-RUN  apt-get install -y python3-venv && python3 -m venv venv
+RUN  python3 -m venv venv
 CMD  ["source venv/bin/activate"]
 
 RUN pip3 install --upgrade pip
-RUN pip3 install -r requirements.txt
+RUN pip3 install --no-cache-dir -r requirements.txt
 
 COPY . /
 
