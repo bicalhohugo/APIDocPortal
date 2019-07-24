@@ -22,18 +22,16 @@ Portal de Documentações de Serviços e APIs
 
 8) Não menos importante, configure o seu mongodb local ou na nuvem (atlas) através do arquivo config/properties.config
 
-9) Execute os passos 4, 5 e 6 descritos abaixo para acessar o site
+9) Execute os passos a partir do 3, descritos abaixo para acessar o site
 
 # Rodando no Docker
 
 1) Instale o Docker e o docker-compose no seu ambiente
 
-2) Build a imagem com o comando: docker build -t apidocs:latest .
+2) Rode o comando docker-compose up --build -d para efetuar o build da imagem e subir o compose
 
-3) Rode o comando docker-compose up --build -d
+3) Acesse "localhost:5000" e o site estará no ar e conectado ao mongodb
 
-4) Acesse "localhost:5000" e o site estará no ar e conectado ao mongodb
+4) Crie um usuário admin padrão acessando a rota "locahost:5000/configuration/seed"
 
-5) Crie um usuário admin padrão acessando a rota "locahost:5000/configuration/seed"
-
-6) Retorne ao site e digite: admin@apidocs.com.br com senha: admin
+5) Retorne ao site e digite: admin@apidocs.com.br com senha: admin

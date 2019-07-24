@@ -2,7 +2,9 @@ version: '3'
 
 services:
     apidocs:
-        image: apidocs:latest
+        build:
+            context: .
+            dockerfile: ./Dockerfile
         ports:
             - "5000:8080"
         deploy:
