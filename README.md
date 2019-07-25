@@ -35,3 +35,7 @@ Portal de Documentações de Serviços e APIs
 4) Crie um usuário admin padrão acessando a rota "locahost:5000/configuration/seed"
 
 5) Retorne ao site e digite: admin@apidocs.com.br com senha: admin
+
+# Subindo o MongoDB local
+
+1) Na raiz da app, rode o comando: docker run --name mongo -d -p 27017:27017 -v /mongodb:/data/db mongo:latest

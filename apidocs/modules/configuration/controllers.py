@@ -11,9 +11,11 @@ bp = Blueprint('configuration_controller', __name__)
 ### METHODS ###
 
 def save_configurations():
+    database_prefix = request.form['database_prefix']
     database_host = request.form['database_host']
     database_port = request.form['database_port']
     database_db = request.form['database_db']
+    database_profile = request.form['database_profile']
     pagination_max_per_page = request.form['pagination_max_per_page']
 
     error = None
@@ -34,7 +36,7 @@ def save_configurations():
             error = 'Qtd. por Página com valor inválido e/ou não informado.'
 
     if error is None:
-        model = ConfigurationModel(database_host, database_port, database_db, pagination_max_per_page)
+        model = ConfigurationModel(database_prefix, database_host, database_port, database_db, database_profile, pagination_max_per_page)
         config = model.get_configuration_model()
         result = Configuration().save_configurations(config)
 
@@ -50,6 +52,8 @@ def seed():
         register_new_admin('Admin', 'API Docs', 'admin@apidocs.com.br', 'admin')
 
         #Cria os métodos http
+
+        #Cria os tipos de adaptadores
 
         return True, ""
     except Exception as e:

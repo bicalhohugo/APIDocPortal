@@ -6,7 +6,6 @@ def create_app(test_config=None):
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_mapping(
         SECRET_KEY = 'dev',
-        #DATABASE=os.path.join(app.instance_path, 'api-docs.sqlite'),
         UPLOAD_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static')
     )
 

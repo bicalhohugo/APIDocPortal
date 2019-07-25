@@ -12,15 +12,21 @@
             <h2 class="h4">Database</h2>
             <hr/>
             <div class="form-group row">
+                <label for="database_prefix" class="col-sm-2 col-form-label">Prefixo</label>
+                <div class="col-sm-10">
+                    <input type="text" readonly class="form-control" id="database_prefix" name="database_prefix" value="{{ config['database'][config['database']['profile']]['mongo_prefix'] }}">
+                </div>
+            </div>
+            <div class="form-group row">
                 <label for="database_host" class="col-sm-2 col-form-label">Host</label>
                 <div class="col-sm-10">
-                    <input type="text" readonly class="form-control" id="database_host" name="database_host" value="{{ config['database']['host'] }}">
+                    <input type="text" readonly class="form-control" id="database_host" name="database_host" value="{{ config['database'][config['database']['profile']]['host'] }}">
                 </div>
             </div>
             <div class="form-group row">
                 <label for="database_port" class="col-sm-2 col-form-label">Porta</label>
                 <div class="col-sm-10">
-                    <input type="text" readonly class="form-control" id="database_port" name="database_port" value="{{ config['database']['port'] }}">
+                    <input type="text" readonly class="form-control" id="database_port" name="database_port" value="{{ config['database'][config['database']['profile']]['port'] }}">
                 </div>
             </div>
             <div class="form-group row">
@@ -28,7 +34,13 @@
                 <div class="col-sm-10">
                     <input type="text" readonly class="form-control" id="database_db" name="database_db" value="{{ config['database']['db'] }}">
                 </div>
-            </div>            
+            </div>
+            <div class="form-group row">
+                <label for="database_profile" class="col-sm-2 col-form-label">Perfil</label>
+                <div class="col-sm-10">
+                    <input type="text" readonly class="form-control" id="database_profile" name="database_profile" value="{{ config['database']['profile'] }}">
+                </div>
+            </div>                        
             <hr />
             <h2 class="h4">Paginação</h2>
             <hr/>
