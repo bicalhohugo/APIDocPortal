@@ -35,7 +35,7 @@ def register():
         if error is None:
             register_new_user(firstname, lastname, email, password)
 
-            flash('Seu registro foi concluído em nosso sistema! Para nos acessar, aguarde a sua aprovação. Em caso de dúvidas, envie um e-mail para IT Arquitetura (it_arquitetura@nextel.com.br).','info')
+            flash('Seu registro foi concluído em nosso sistema! Para nos acessar, aguarde a sua aprovação. ','info')
                 
             return True
         

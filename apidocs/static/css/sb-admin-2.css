@@ -20,7 +20,7 @@
   --pink: #e83e8c;
   --red: #e74a3b;
   --orange: #fd7e14;
-  --nextelorange: #ff5a00;
+  --apidocsorange: #ff5a00;
   --yellow: #f6c23e;
   --green: #1cc88a;
   --teal: #20c9a6;
@@ -11593,19 +11593,19 @@ a:focus {
 }
 
 .bg-login-image {
-  background: url("../img/nextel/login.jpg");
+  background: url("../img/portal/login.jpg");
   background-position: center;
   background-size: cover;
 }
 
 .bg-register-image {
-  background: url("../img/nextel/register.jpg");
+  background: url("../img/portal/register.jpg");
   background-position: center;
   background-size: cover;
 }
 
 .bg-password-image {
-  background: url("../img/nextel/forgot-password.jpg");
+  background: url("../img/portal/forgot-password.jpg");
   background-position: center;
   background-size: cover;
 }

@@ -1,6 +1,11 @@
 .idea
 .vscode
 venv
+instance
+*/static/diagrams/*
+*/static/uploads/*
+*/static/yml/*
+
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
