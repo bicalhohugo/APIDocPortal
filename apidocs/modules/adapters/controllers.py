@@ -2,6 +2,7 @@ from flask import (
         Blueprint, render_template, url_for, flash, redirect
 )
 from apidocs.modules.access_control.manager import login_required, admin_required
+from apidocs.modules.adapters.models import AdapterTypeModel
 from apidocs.db.mongodb import MongoDb
 
 bp = Blueprint('adapter_controller', __name__)
@@ -15,6 +16,19 @@ def get_all_adapter_type():
 
 def get_adapter_type_by_id(adapter_type_id):
     return db_adapters_type.get_by_id(adapter_type_id)
+
+def get_adapter_type_by_type(type):
+    filter = { 'type' : type }
+
+    return db_adapters_type.get_one_by_filter(filter)
+
+def save_adapter_type(type):
+    if get_adapter_type_by_type(type):
+        return
+        
+    adapter_type = AdapterTypeModel(type).get_model()
+
+    adapter_type_insert(adapter_type)
 
 def adapter_type_insert(adapter_type):
     return db_adapters_type.insert(adapter_type)

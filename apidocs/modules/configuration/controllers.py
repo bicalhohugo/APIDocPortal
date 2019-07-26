@@ -5,6 +5,8 @@ from apidocs.modules.access_control.manager import login_required, admin_require
 from apidocs.config.configuration import Configuration
 from apidocs.modules.configuration.models import ConfigurationModel
 from apidocs.modules.user.controllers import register_new_admin
+from apidocs.modules.adapters.controllers import save_adapter_type
+from apidocs.modules.http_methods.controllers import save_http_methods
 
 bp = Blueprint('configuration_controller', __name__)
 
@@ -52,8 +54,15 @@ def seed():
         register_new_admin('Admin', 'API Docs', 'admin@apidocs.com.br', 'admin')
 
         #Cria os métodos http
+        save_http_methods('POST', 'btn-success', 'alert-success border-success')
+        save_http_methods('GET', 'btn-info', 'alert-info border-info')
+        save_http_methods('PUT', 'btn-warning', 'alert-warning border-warning')
+        save_http_methods('PATCH', 'btn-patch', 'alert-patch border-patch')
+        save_http_methods('DELETE', 'btn-danger', 'alert-danger border-danger')
 
         #Cria os tipos de adaptadores
+        save_adapter_type('db')
+        save_adapter_type('ws')
 
         return True, ""
     except Exception as e:

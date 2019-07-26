@@ -8,10 +8,10 @@ from apidocs.helpers.pagination import Pagination
 from apidocs.modules.access_control.manager import login_required
 from apidocs.db.mongodb import MongoDb
 from apidocs.helpers.utils import yml_path
+from apidocs.modules.http_methods.controllers import get_http_methods, get_http_method_by_key
 
 bp = Blueprint('api_controller', __name__)
 db_apis = MongoDb('apis')
-db_http_methods = MongoDb('http_methods')
 
 ### API METHODS ###
 
@@ -60,14 +60,6 @@ def api_already_exists(api):
         return True
     else:
         return False
-
-def get_http_methods():
-    return db_http_methods.get_all()
-
-def get_http_method_by_key(method):
-    filter = { 'method' : method}
-
-    return db_http_methods.get_one_by_filter(filter)
 
 def get_static_yaml_file(api_id):
     return url_for('static', filename='yml/{}.yaml'.format(api_id))

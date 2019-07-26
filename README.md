@@ -18,7 +18,7 @@ Portal de Documentações de Serviços e APIs
 
 6) Instale todos os requisitos através do comando pip: pip install -r requirements.txt
 
-7) Rode o comando: sh startup.sh e sua app será iniciada na porta 8080 no localhost
+7) Rode o comando: source startup.sh e sua app será iniciada na porta 8080 no localhost
 
 8) Não menos importante, configure o seu mongodb local ou na nuvem (atlas) através do arquivo config/properties.config
 
